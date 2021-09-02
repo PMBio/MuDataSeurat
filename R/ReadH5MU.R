@@ -22,6 +22,8 @@ ReadH5MU <- function(file) {
 
   # Get (multimoal) embeddings
   embeddings <- read_attr_m(h5, 'obs', rownames(metadata))
+  # If obs->mod mappings are in the file, dismiss them
+  embeddings <- embeddings[!names(embeddings) %in% assays]
 
   # Get (multimoal) loadings
   loadings <- read_attr_m(h5, 'var', rownames(ft_metadata))
@@ -35,7 +37,6 @@ ReadH5MU <- function(file) {
   var_pairs <- read_attr_p(h5, 'var')
   if (!is.null(var_pairs) && length(var_pairs) > 0) 
     missing_on_read("/varp", "pairwise annotation of variables")
-  
   
   # mod/.../X
   modalities <- lapply(assays, function(mod) {
@@ -110,6 +111,7 @@ ReadH5MU <- function(file) {
     mod_embeddings <- mod_obsm[[mod]]
     for (emb in names(mod_embeddings)) {
       emb_name <- paste(mod, toupper(gsub('X_', '', emb)), sep = "")
+      # Embeddings keys will have to follow the format alphanumericcharacters_, e.g. RNAPCA_.
 
       maybe_loadings <- matrix()
       if (emb %in% names(OBSM2VARM)) {

@@ -1,0 +1,15 @@
+Package: MuDataSeurat
+Title: MuData serialization for Seurat
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Danila",
+           family = "Bredikhin",
+           role = c("aut", "cre"),
+           email = "danila.bredikhin@embl.de",
+           comment = c(ORCID = "0000-0001-8089-6983"))
+Description: Save Seurat object to h5mu files
+Imports: hdf5r, Matrix, Seurat
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1

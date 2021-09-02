@@ -43,8 +43,6 @@ ReadH5MU <- function(file) {
     view <- h5[['mod']][[mod]]
 
     X <- read_matrix(view[['X']])
-    # TODO: .raw
-    # TODO: .layers
 
     var <- read_with_index(view[['var']])
 
@@ -55,7 +53,62 @@ ReadH5MU <- function(file) {
     colnames(X) <- rownames(obs)
     rownames(X) <- rownames(var)
 
-    assay <- Seurat::CreateAssayObject(counts = X)
+    raw <- NULL
+    if ("raw" %in% names(view)) {
+      raw <- view[['raw']]
+      raw.X <- read_matrix(raw[['X']])
+      raw.var <- read_with_index(raw[['var']])
+      rownames(raw.X) <- rownames(raw.var)
+      colnames(raw.X) <- colnames(X)
+      if (nrow(raw.X) != nrow(X)) {
+        warning(paste0("Only a subset of mod/", mod, "/raw/X is loaded, variables (features) that are not present in mod/", mod, "/X are discarded."))
+        raw.X <- raw.X[rownames(X),]
+      }
+    }
+
+    layers <- NULL
+    custom_layers <- NULL
+    if ("layers" %in% names(view)) {
+      layers <- lapply(view[['layers']]$names, function(layer_name) {
+        layer <- read_matrix(view[['layers']][[layer_name]])
+        rownames(layer) <- rownames(X)
+        colnames(layer) <- colnames(X)
+        layer
+      })
+      names(layers) <- view[['layers']]$names
+      custom_layers <- names(layers)[!names(layers) %in% c("counts")]
+      if (length(custom_layers) > 0) {
+        missing_on_read(paste0("some of mod/", mod, "/layers"), "custom layers, unless labeled 'counts'")
+      }
+    }
+
+    # Assumptions:
+    #   1. X -> counts
+    #   2. raw & X -> data & scale.data
+    #   3. layers['counts'] & X -> counts & data
+    #   4. layers['counts'], raw, X -> counts, data, scale.data
+    counts_as_layer <- !is.null(layers) && "counts" %in% names(layers)
+    if (!counts_as_layer && is.null(raw)) {
+      # 1
+      assay <- Seurat::CreateAssayObject(counts = X)
+    } else {
+      if (!is.null(raw)) {
+        if (counts_as_layer) {
+          # 2
+          assay <- Seurat::CreateAssayObject(data = raw.X)
+          assay@scale.data <- X 
+        } else {
+          # 4
+          assay <- Seurat::CreateAssayObject(counts = layers[['counts']])
+          assay@data <- raw.X
+          assay@scale.data <- X 
+        }
+      } else {
+        # 3
+        assay <- Seurat::CreateAssayObject(counts = layers[['counts']])
+        assay@data <- X
+      }
+    }
 
     assay
   })

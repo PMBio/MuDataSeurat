@@ -1,4 +1,4 @@
-#' @import hdf5r
+#' @importFrom hdf5r is_hdf5 H5File
 open_and_check_mudata <- function(filename) {
     if (readChar(filename, 6) != "MuData") {
         if (is_hdf5(filename)) {
@@ -10,12 +10,29 @@ open_and_check_mudata <- function(filename) {
     H5File$new(filename, mode="r")
 }
 
+#' @import hdf5r
+open_anndata <- function(filename) {
+  # PATH/filename.h5mu/mod/rna => read a single modality from the .h5mu file
+  path_fragments <- strsplit(filename, "\\.h5mu")[[1]]
+  if (length(path_fragments) == 1) {
+    h5 <- H5File$new(filename, mode="r")
+  } else {
+    h5 <- H5File$new(paste0(path_fragments[1], ".h5mu"), mode="r")
+    mod_path <- path_fragments[2]
+    if (substr(mod_path, 1, 4) != "/mod") {
+      mod_path <- paste0("/mod", mod_path)
+    }
+    h5 <- h5[[mod_path]]
+  }
+  h5
+}
+
 missing_on_read <- function(loc, desc = "") {
   details <- ""
   if (!is.null(desc) && desc != "") {
     details <- paste0("Seurat does not support ", desc, ".")
   }
-  warning(paste0("Missing on read: ", loc, details))
+  warning(paste0("Missing on read: ", loc, ". ", details))
 }
 
 
@@ -53,23 +70,13 @@ read_with_index <- function(dataset) {
       }
       values
     })
-    table <- data.frame(Reduce(cbind, col_list))
+    table <- data.frame(Reduce(cbind.data.frame, col_list))
     colnames(table) <- columns
 
     if (indexcol %in% colnames(table)) {
       rownames(table) <- table[,indexcol,drop=TRUE]
       table <- table[,!colnames(table) %in% c(indexcol),drop=FALSE]
     }
-
-    # DEPRECATED:
-    # For consistency with other tools, this is done via references (see above)
-    # Make factors out of categorical data
-    # if ("__categories" %in% names(dataset)) {
-    #   cats <- dataset[["__categories"]]
-    #   for (cat in names(cats)) {
-    #     table[[cat]] <- factor(as.integer(table[[cat]]) + 1, labels = cats[[cat]]$read())
-    #   }
-    # }
 
     # Fix column order
     if ("column-order" %in% names(dataset_attr)) {
@@ -101,19 +108,113 @@ read_matrix <- function(dataset) {
       i <- dataset[["indices"]]$read()
       p <- dataset[["indptr"]]$read()
       x <- dataset[["data"]]$read()
+
+      rowwise <- FALSE
+      if ("encoding-type" %in% h5attr_names(dataset)) {
+        rowwise <- h5attr(dataset, "encoding-type") == "csr_matrix"
+      }
+
       if ("shape" %in% h5attr_names(dataset)) {
         X_dims <- h5attr(dataset, "shape")
       } else {
-        X_dims <- c(max(i), max(p))
+        X_dims <- c(length(p) - 1, max(i) + 1)
+        if (rowwise) {
+          X_dims <- rev(X_dims)
+        }
       }
-      X <- Matrix::Matrix(0, X_dims[1], X_dims[2])
+
+      # X is a dgCMatrix.
+      # No direct dgCMatrix -> dgRMatrix coersion provided in Matrix.
+      if (rowwise) {
+        X <- Matrix::Matrix(0, X_dims[2], X_dims[1], doDiag = FALSE)
+      } else {
+        X <- Matrix::Matrix(0, X_dims[1], X_dims[2], doDiag = FALSE)
+      }
       X@i <- i
       X@p <- p
       X@x <- x
-      t(X)
+
+      if (rowwise) {
+        X
+      } else {
+        Matrix::t(X)
+      }
     } else {
       dataset$read()
     }
+}
+
+#' @import Matrix
+read_layers_to_assay <- function(root) {
+  X <- read_matrix(root[['X']])
+
+  var <- read_with_index(root[['var']])
+
+  obs <- read_with_index(root[['obs']])
+  if (is("obs", "data.frame"))
+    rownames(obs) <- paste(mod, rownames(obs), sep="-")
+
+  colnames(X) <- rownames(obs)
+  rownames(X) <- rownames(var)
+
+  raw <- NULL
+  if ("raw" %in% names(root)) {
+    raw <- root[['raw']]
+    raw.X <- read_matrix(raw[['X']])
+    raw.var <- read_with_index(raw[['var']])
+    rownames(raw.X) <- rownames(raw.var)
+    colnames(raw.X) <- colnames(X)
+    if (nrow(raw.X) != nrow(X)) {
+      warning(paste0("Only a subset of mod/", mod, "/raw/X is loaded, variables (features) that are not present in mod/", mod, "/X are discarded."))
+      raw.X <- raw.X[rownames(X),]
+    }
+  }
+
+  layers <- NULL
+  custom_layers <- NULL
+  if ("layers" %in% names(root)) {
+    layers <- lapply(root[['layers']]$names, function(layer_name) {
+      layer <- read_matrix(root[['layers']][[layer_name]])
+      rownames(layer) <- rownames(X)
+      colnames(layer) <- colnames(X)
+      layer
+    })
+    names(layers) <- root[['layers']]$names
+    custom_layers <- names(layers)[!names(layers) %in% c("counts")]
+    if (length(custom_layers) > 0) {
+      missing_on_read(paste0("some of mod/", mod, "/layers"), "custom layers, unless labeled 'counts'")
+    }
+  }
+
+  # Assumptions:
+  #   1. X -> counts
+  #   2. raw & X -> data & scale.data
+  #   3. layers['counts'] & X -> counts & data
+  #   4. layers['counts'], raw, X -> counts, data, scale.data
+  counts_as_layer <- !is.null(layers) && "counts" %in% names(layers)
+  if (!counts_as_layer && is.null(raw)) {
+    # 1
+    assay <- Seurat::CreateAssayObject(counts = X)
+  } else {
+    if (!is.null(raw)) {
+      if (counts_as_layer) {
+        # 4
+        assay <- Seurat::CreateAssayObject(counts = layers[['counts']])
+        assay@data <- raw.X
+        assay@scale.data <- X
+      } else {
+        # 2
+        assay <- Seurat::CreateAssayObject(data = raw.X)
+        assay@scale.data <- X 
+      }
+    } else {
+      # 3
+      assay <- Seurat::CreateAssayObject(counts = layers[['counts']])
+      assay@data <- X
+    }
+  }
+
+  assay
 }
 
 read_attr_m <- function(root, attr_name, dim_names = NULL) {
@@ -140,6 +241,7 @@ read_attr_m <- function(root, attr_name, dim_names = NULL) {
   attrm
 }
 
+#' @import Seurat
 read_attr_p <- function(root, attr_name, dim_names = NULL) {
   if (is.null(dim_names)) {
     attr_df <- read_with_index(root[[attr_name]])
@@ -153,7 +255,11 @@ read_attr_p <- function(root, attr_name, dim_names = NULL) {
       mx <- read_matrix(root[[attrp_name]][[graph]])
       rownames(mx) <- dim_names
       colnames(mx) <- dim_names
-      mx
+      # Prevent automatic coersion based on equal dimensions
+      if ("dsCMatrix" %in% class(mx)) {
+        mx <- as(mx, "dgCMatrix")
+      }
+      Seurat::as.Graph(mx)
     })
     
     names(attrp) <- names(root[[attrp_name]])
@@ -162,5 +268,6 @@ read_attr_p <- function(root, attr_name, dim_names = NULL) {
   attrp
 }
 
-
+# For some common reductions, 
+# there are conventional names for the loadings slots
 OBSM2VARM <- list("X_pca" = "PCs", "X_mofa" = "LFs")

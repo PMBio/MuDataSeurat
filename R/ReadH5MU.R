@@ -1,15 +1,104 @@
+#' @export ReadH5AD
+ReadH5AD <- function(file) {
+  # Connect to the the file
+  h5 <- open_anndata(file)
+
+  # Get metadata
+  obs <- read_with_index(h5[["obs"]])
+  var <- read_with_index(h5[["var"]])
+  
+  # X
+  assay <- read_layers_to_assay(h5)
+
+  # obsm
+  obsm <- read_attr_m(h5, 'obs')
+
+  # varm
+  varm <- read_attr_m(h5, 'var')
+
+  # obsp
+  obsp <- read_attr_p(h5, 'obs')
+  
+  # If there are var pairs, there's no place to store it 
+  # in the Seurat object
+  # var_pairs <- read_attr_p(h5, 'var')
+  var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
+  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0) 
+    missing_on_read("/varp", "pairwise annotation of variables")
+
+  # Create a Seurat object
+  # If read from .h5mu modality, give an assay name
+  path_fragments <- strsplit(file, "\\.h5mu")[[1]]
+  if (length(path_fragments) == 2) {
+    mod_path_fragments <- strsplit(path_fragments[2], "\\/")[[1]]
+    assay_name <- mod_path_fragments[length(mod_path_fragments)]
+    srt <- Seurat::CreateSeuratObject(assay, assay = assay_name)
+  } else {
+    srt <- Seurat::CreateSeuratObject(assay)
+  }
+
+  # Specify highly variable features
+  if ("highly_variable" %in% colnames(var)) {
+    if (is.logical(var$highly_variable)) {
+      srt@assays[[1]]@var.features <- rownames(srt)[var$highly_variable]
+    }
+  }
+
+  # Add metadata
+  meta_data_names <- rownames(srt@meta.data)
+  srt@meta.data <- cbind.data.frame(obs, srt@meta.data)
+  rownames(srt@meta.data) <- meta_data_names
+
+  # Add feature metadata
+  meta_features_names <- rownames(srt@assays[[1]]@meta.features)
+  srt@assays[[1]]@meta.features <- cbind.data.frame(var, srt@assays[[1]]@meta.features)
+  rownames(srt@assays[[1]]@meta.features) <- meta_features_names
+
+  # Add embeddings
+  for (emb in names(obsm)) {
+    emb_name <- gsub('X_', '', emb)
+
+    maybe_loadings <- matrix()
+    if (emb %in% names(OBSM2VARM)) {
+      varm_key = OBSM2VARM[[emb]]
+      if (varm_key %in% names(varm)) {
+        maybe_loadings <- varm[[varm_key]]
+      }
+    }
+
+    emb_stdev <- numeric()
+    if (emb_name %in% names(h5[["uns"]])) {
+      if ("variance" %in% names(h5[["uns"]][[emb_name]])) {
+        emb_stdev <- sqrt(h5[["uns"]][[emb_name]][["variance"]]$read())
+      }
+    }
+
+    srt[[emb_name]] <- Seurat::CreateDimReducObject(
+      embeddings = obsm[[emb]][rownames(obs),,drop=FALSE], 
+      loadings = maybe_loadings,
+      key = paste0(emb_name, "_"),
+      assay = Seurat::DefaultAssay(srt),
+      stdev = emb_stdev 
+    )
+  }
+
+  # Add graphs
+  srt@graphs <- obsp
+
+  # Close the connection
+  h5$close()
+
+  srt
+}
+
 #' @description Create a \code{Seurat} object from .h5mu file contents
 #'
-#' @import hdf5r, Matrix, Seurat
+#' @import hdf5r Matrix Seurat
 #'
 #' @return A \code{Seurat} object with the data requested
 #' '
-#' @exportMethod ReadH5MU
-ReadH5MU <- function(file) {
-  # For some common reductions, 
-  # there are conventional names for the loadings slots
-  OBSM2VARM <- list("X_pca" = "PCs", "X_mofa" = "LFs")
-    
+#' @export ReadH5MU
+ReadH5MU <- function(file) {    
   # Connect to the the file
   h5 <- open_and_check_mudata(file)
 
@@ -20,99 +109,40 @@ ReadH5MU <- function(file) {
   metadata <- read_with_index(h5[["obs"]])
   ft_metadata <- read_with_index(h5[["var"]])
 
-  # Get (multimoal) embeddings
+  # Get (multimodal) embeddings
   embeddings <- read_attr_m(h5, 'obs', rownames(metadata))
   # If obs->mod mappings are in the file, dismiss them
   embeddings <- embeddings[!names(embeddings) %in% assays]
 
-  # Get (multimoal) loadings
+  # Get (multimodal) loadings
   loadings <- read_attr_m(h5, 'var', rownames(ft_metadata))
 
   # Get obs pairs
-  # FIXME
-  # obs_pairs <- read_attr_p(h5, 'obs')
+  obs_pairs <- read_attr_p(h5, 'obs')
 
   # If there are var pairs, there's no place to store it 
   # in the Seurat object
-  var_pairs <- read_attr_p(h5, 'var')
-  if (!is.null(var_pairs) && length(var_pairs) > 0) 
+  var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
+  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0) 
     missing_on_read("/varp", "pairwise annotation of variables")
   
-  # mod/.../X
+  # mod/.../X, raw, and layers
   modalities <- lapply(assays, function(mod) {
-    view <- h5[['mod']][[mod]]
-
-    X <- read_matrix(view[['X']])
-
-    var <- read_with_index(view[['var']])
-
-    obs <- read_with_index(view[['obs']])
-    if (is("obs", "data.frame"))
-      rownames(obs) <- paste(mod, rownames(obs), sep="-")
-
-    colnames(X) <- rownames(obs)
-    rownames(X) <- rownames(var)
-
-    raw <- NULL
-    if ("raw" %in% names(view)) {
-      raw <- view[['raw']]
-      raw.X <- read_matrix(raw[['X']])
-      raw.var <- read_with_index(raw[['var']])
-      rownames(raw.X) <- rownames(raw.var)
-      colnames(raw.X) <- colnames(X)
-      if (nrow(raw.X) != nrow(X)) {
-        warning(paste0("Only a subset of mod/", mod, "/raw/X is loaded, variables (features) that are not present in mod/", mod, "/X are discarded."))
-        raw.X <- raw.X[rownames(X),]
-      }
-    }
-
-    layers <- NULL
-    custom_layers <- NULL
-    if ("layers" %in% names(view)) {
-      layers <- lapply(view[['layers']]$names, function(layer_name) {
-        layer <- read_matrix(view[['layers']][[layer_name]])
-        rownames(layer) <- rownames(X)
-        colnames(layer) <- colnames(X)
-        layer
-      })
-      names(layers) <- view[['layers']]$names
-      custom_layers <- names(layers)[!names(layers) %in% c("counts")]
-      if (length(custom_layers) > 0) {
-        missing_on_read(paste0("some of mod/", mod, "/layers"), "custom layers, unless labeled 'counts'")
-      }
-    }
-
-    # Assumptions:
-    #   1. X -> counts
-    #   2. raw & X -> data & scale.data
-    #   3. layers['counts'] & X -> counts & data
-    #   4. layers['counts'], raw, X -> counts, data, scale.data
-    counts_as_layer <- !is.null(layers) && "counts" %in% names(layers)
-    if (!counts_as_layer && is.null(raw)) {
-      # 1
-      assay <- Seurat::CreateAssayObject(counts = X)
-    } else {
-      if (!is.null(raw)) {
-        if (counts_as_layer) {
-          # 2
-          assay <- Seurat::CreateAssayObject(data = raw.X)
-          assay@scale.data <- X 
-        } else {
-          # 4
-          assay <- Seurat::CreateAssayObject(counts = layers[['counts']])
-          assay@data <- raw.X
-          assay@scale.data <- X 
-        }
-      } else {
-        # 3
-        assay <- Seurat::CreateAssayObject(counts = layers[['counts']])
-        assay@data <- X
-      }
-    }
-
-    assay
+    assay <- read_layers_to_assay(h5[['mod']][[mod]])
   })
   names(modalities) <- assays
+
+  # mod/.../obs
+  mod_obs <- lapply(assays, function(mod) {
+    read_with_index(h5[['mod']][[mod]][['obs']])
+  })
+  names(mod_obs) <- assays
+
+  # mod/.../var
+  mod_var <- lapply(assays, function(mod) {
+    read_with_index(h5[['mod']][[mod]][['var']])
+  })
+  names(mod_var) <- assays
 
   # mod/.../obsm
   mod_obsm <- lapply(assays, function(mod) {
@@ -125,14 +155,30 @@ ReadH5MU <- function(file) {
     read_attr_m(h5[['mod']][[mod]], 'var')
   })
   names(mod_varm) <- assays
-
-  # TODO: .obsp
-  # TODO: .varp
+  
+  # mod/.../obsp
+  mod_obsp <- lapply(assays, function(mod) {
+    read_attr_p(h5[['mod']][[mod]], 'obs')
+  })
+  names(mod_obsp) <- assays
+  
+  # If there are var pairs in individual modalities, 
+  # there's no place to store it in the Seurat object.
+  for (mod in assays) {
+    if ("varp" %in% names(h5[['mod']][[mod]])) {
+      if (length(h5[['mod']][[mod]][['varp']]) > 0) {
+        missing_on_read(paste0("/mod", mod, "/varp"), "pairwise annotation of variables")
+      }
+    }
+  }
+  var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
+  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0) 
+    missing_on_read("/varp", "pairwise annotation of variables")
 
   # Only common observations can be read
   obs_names <- Reduce(intersect, lapply(modalities, colnames))
   mods_n_obs <- unique(vapply(modalities, ncol, 1))
-  if (length(mods_n_obs) > 1 || length(mods_n_obs[1]) != length(obs_names)) {
+  if (length(mods_n_obs) > 1 || mods_n_obs[1] != length(obs_names)) {
     warning("Only the intersection of observations (samples) is loaded. Observations that are not present in all the modalities (assays) are discarded.")
   }
 
@@ -140,6 +186,24 @@ ReadH5MU <- function(file) {
   srt <- Seurat::CreateSeuratObject(modalities[[1]][,obs_names], assay = names(modalities)[1])
   for (modality in names(modalities)[2:length(modalities)]) {
     srt[[modality]] <- subset(modalities[[modality]], cells = obs_names)
+  }
+
+  # Metadata, features metadata, and variable features
+  for (modality in names(modalities)) {
+    # Append modality metadata
+    srt@meta.data <- cbind.data.frame(srt@meta.data, mod_obs[[modality]])
+
+    # Add modality feature metadata
+    meta_features_names <- rownames(srt[[modality]]@meta.features)
+    srt[[modality]]@meta.features <- cbind.data.frame(mod_var[[modality]], srt[[modality]]@meta.features)
+    rownames(srt[[modality]]@meta.features) <- meta_features_names
+
+    # Specify highly variable features
+    if ("highly_variable" %in% colnames(mod_var[[modality]])) {
+      if (is.logical(mod_var[[modality]]$highly_variable)) {
+        srt[[modality]]@var.features <- rownames(srt[[modality]])[mod_var[[modality]]$highly_variable]
+      }
+    }
   }
 
   # Add joint embeddings
@@ -150,11 +214,20 @@ ReadH5MU <- function(file) {
     if (emb %in% names(OBSM2VARM)) {
       varm_key = OBSM2VARM[[emb]]
       maybe_loadings <- loadings[[varm_key]]
-    } 
+    }
+
+    emb_stdev <- numeric()
+    if (emb_name %in% names(h5[["uns"]])) {
+      if ("variance" %in% names(h5[["uns"]][[emb_name]])) {
+        emb_stdev <- sqrt(h5[["uns"]][[emb_name]][["variance"]]$read())
+      }
+    }
+
     srt[[emb_name]] <- Seurat::CreateDimReducObject(
       embeddings = embeddings[[emb]][obs_names,,drop=FALSE], 
       loadings = maybe_loadings,
       key = paste0(emb_name, "_"),
+      stdev = emb_stdev,
       assay = Seurat::DefaultAssay(srt),  # this is not true but an existing assay must be provided
     )
   }
@@ -163,7 +236,8 @@ ReadH5MU <- function(file) {
   for (mod in names(mod_obsm)) {
     mod_embeddings <- mod_obsm[[mod]]
     for (emb in names(mod_embeddings)) {
-      emb_name <- paste(mod, toupper(gsub('X_', '', emb)), sep = "")
+      emb_name <- gsub('X_', '', emb)
+      modemb_name <- paste(mod, gsub('X_', '', emb), sep = "")
       # Embeddings keys will have to follow the format alphanumericcharacters_, e.g. RNAPCA_.
 
       maybe_loadings <- matrix()
@@ -172,25 +246,45 @@ ReadH5MU <- function(file) {
         maybe_loadings <- mod_varm[[mod]][[varm_key]]
       }
 
-      srt[[emb_name]] <- Seurat::CreateDimReducObject(
+      emb_stdev <- numeric()
+      if (emb_name %in% names(h5[["mod"]][[mod]][["uns"]])) {
+        if ("variance" %in% names(h5[["mod"]][[mod]][["uns"]][[emb_name]])) {
+          emb_stdev <- sqrt(h5[["mod"]][[mod]][["uns"]][[emb_name]][["variance"]]$read())
+        }
+      }
+
+      srt[[modemb_name]] <- Seurat::CreateDimReducObject(
         embeddings = mod_embeddings[[emb]][obs_names,,drop=FALSE],
         loadings = maybe_loadings,
-        key = paste0(emb_name, "_"), 
+        key = paste0(modemb_name, "_"), 
+        stdev = emb_stdev,
         assay = mod,
       )
     }
   }
 
   # Add graphs
-  # FIXME
-  # if (length(obs_pairs) > 0) {
-  #   srt@graphs <- lapply(obs_pairs, function(graph) {
-  #     graph[obs_names,obs_names,drop=FALSE]
-  #   })
-  #   names(srt@graphs) <- names(obs_pairs)
-  # }
+  
+  # Only take into account common observations
+  if (length(obs_pairs) > 0) {
+    srt@graphs <- lapply(obs_pairs, function(graph) {
+      graph[obs_names,obs_names,drop=FALSE]
+    })
+    names(srt@graphs) <- names(obs_pairs)
+  }
 
-  # TODO: Data from .uns["neighbors"].
+  for (mod in names(mod_obsp)) {
+    for (graph in names(mod_obsp[[mod]])) {
+      graph_name <- graph
+      # /mod/RNA/obsp/distances -> @graphs$RNA_distances
+      if (graph %in% names(srt@graphs)) {
+        graph_name <- paste(mod, graph, sep = "_")
+      }
+      srt@graphs[[graph_name]] <- mod_obsp[[mod]][[graph]]
+      srt@graphs[[graph_name]]@assay.used <- mod
+    }
+  }
+  
 
   # Close the connection
   h5$close_all()

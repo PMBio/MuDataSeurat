@@ -31,10 +31,6 @@ test_that("a Seurat object with two modalities can be created, written, and read
 
     srt <- CreateSeuratObject(assay_x, assay = "x")
     srt[["y"]] <- assay_y
-
-    # Add data
-    srt[["x"]]@data <- x
-    srt[["y"]]@data <- y
     
     # Writing
     outfile <- fileh5mu
@@ -60,7 +56,7 @@ test_that("a Seurat object can be created from an .h5mu file", {
     expect_equal(names(srt)[2], "y")
 })
 
-test_that("values in sparse count matrices are properly recovered", {
+test_that("values in matrices are properly recovered", {
     srt <- ReadH5MU(fileh5mu)
     expect_equal(srt[["x"]]@counts[true_val_i, true_val_j], true_val)
     expect_equal(srt[["x"]]@data[true_val_i, true_val_j], true_val)

@@ -23,7 +23,7 @@ ReadH5AD <- function(file) {
   # in the Seurat object
   # var_pairs <- read_attr_p(h5, 'var')
   var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
-  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0) 
+  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0) 
     missing_on_read("/varp", "pairwise annotation of variables")
 
   # Create a Seurat object
@@ -123,7 +123,7 @@ ReadH5MU <- function(file) {
   # If there are var pairs, there's no place to store it 
   # in the Seurat object
   var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
-  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0) 
+  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0) 
     missing_on_read("/varp", "pairwise annotation of variables")
   
   # mod/.../X, raw, and layers

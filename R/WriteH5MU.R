@@ -45,7 +45,7 @@ WriteH5ADHelper <- function(object, assay, root) {
           write_sparse_matrix(counts_group, x_counts, sparse_type)
         } else {
           # dense matrix
-          root$create_dataset("X", x_counts)
+          root$create_dataset("X", t(x_counts))
         }
       } else {
         layers_group <- root$create_group("layers")

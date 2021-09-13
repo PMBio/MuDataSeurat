@@ -6,7 +6,12 @@ Authors@R:
            family = "Bredikhin",
            role = c("aut", "cre"),
            email = "danila.bredikhin@embl.de",
-           comment = c(ORCID = "0000-0001-8089-6983"))
+           comment = c(ORCID = "0000-0001-8089-6983")),
+    person(given = "Ilia",
+           family = "Kats",
+           role = c("aut"),
+           email = "i.kats@dkfz-heidelberg.de",
+           comment = c(ORCID = "0000-0001-5220-5671")))
 Description: Save Seurat object to h5mu files
 Imports: hdf5r, Matrix, Seurat
 License: GPL-3

@@ -47,6 +47,6 @@ Please note that only the intersection of cells is currently loaded into the Seu
 
 Other R packages for multimodal I/O include:
 
-- [MuData](https://github.com/PMBio/mudata.r) for [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) objects
+- [MuData](https://github.com/PMBio/MuDataMAE) for [MultiAssayExperiment](https://bioconductor.org/packages/release/bioc/html/MultiAssayExperiment.html) objects
 - [SeuratDisk](https://github.com/mojaveazure/seurat-disk)
 

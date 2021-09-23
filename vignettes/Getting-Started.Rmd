@@ -86,13 +86,13 @@ WriteH5MU(cbmc_u, "cbmc.h5mu")
 We can manually check the top level of the structure of the file:
 
 ```{r}
-hdf5r::h5ls("cbmc.h5mu", recursive = FALSE)
+h5 <- H5File$new("cbmc.h5mu", mode = "r")
+h5
 ```
 
 Or dig deeper into the file:
 
 ```{r}
-h5 <- H5File$new("cbmc.h5mu", mode = "r")
 h5[["mod"]]
 h5$close()
 ```
@@ -116,8 +116,8 @@ head(cbmc_r@meta.data[,1:4])
 Features metadata is also recovered:
 
 ```{r}
-head(cbmc_u[["RNA"]]@features.metadata[,1:4])
-head(cbmc_r[["RNA"]]@features.metadata[,1:4])
+head(cbmc_u[["RNA"]]@meta.features[,1:4])
+head(cbmc_r[["RNA"]]@meta.features[,1:4])
 ```
 
 # H5AD files

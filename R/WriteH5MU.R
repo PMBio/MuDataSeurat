@@ -3,6 +3,8 @@ setGeneric("WriteH5AD", function(object, file, assay = NULL, overwrite = TRUE) s
 
 #' A helper function to write a modality (an assay) to an .h5mu file
 #'
+#' @keywords internal
+#' 
 #' @import hdf5r
 #' @importFrom Matrix t
 WriteH5ADHelper <- function(object, assay, root) {

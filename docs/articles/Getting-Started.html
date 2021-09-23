@@ -358,7 +358,7 @@
 <a href="#creating-seurat-objects-from-h5mu-files" class="anchor"></a>Creating Seurat objects from H5MU files</h2>
 <p>This package provides <code>ReadH5MU</code> to create an object with data from an H5MU file. Since H5MU structure has been designed to accommodate more structured information than Seurat, only some data will be read. For instance, Seurat has no support for loading multimodal embeddings or pairwise graphs.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cbmc_r</span> <span class="op">&lt;-</span> <span class="fu">ReadH5MU</span><span class="op">(</span><span class="st">"cbmc.h5mu"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">cbmc_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5MU.html">ReadH5MU</a></span><span class="op">(</span><span class="st">"cbmc.h5mu"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in missing_on_read("/varp", "pairwise annotation of variables"): Missing</span>
 <span class="co">#&gt; on read: /varp. Seurat does not support pairwise annotation of variables.</span>
 <span class="va">cbmc_r</span>
@@ -558,7 +558,7 @@
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>This data can be retrieved from an H5AD file with <code>ReadH5AD</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">pbmc3k_r</span> <span class="op">&lt;-</span> <span class="fu">ReadH5AD</span><span class="op">(</span><span class="st">"pbmc3k.h5ad"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">pbmc3k_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5AD.html">ReadH5AD</a></span><span class="op">(</span><span class="st">"pbmc3k.h5ad"</span><span class="op">)</span>
 <span class="va">pbmc3k_r</span>
 <span class="co">#&gt; An object of class Seurat </span>
 <span class="co">#&gt; 13714 features across 2700 samples within 1 assay </span>

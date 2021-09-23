@@ -107,7 +107,12 @@ ReadH5MU <- function(file) {
 
   # Get global metadata
   metadata <- read_with_index(h5[["obs"]])
+
+  # NOTE: there's no global feature metadata in the Seurat object
+  # NOTE: these names are currently required to be unique
   ft_metadata <- read_with_index(h5[["var"]])
+  if (ncol(ft_metadata) > 0) 
+    missing_on_read("/var", "global variables metadata")
 
   # Get (multimodal) embeddings
   embeddings <- read_attr_m(h5, 'obs', rownames(metadata))

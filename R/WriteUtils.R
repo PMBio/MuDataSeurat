@@ -87,6 +87,19 @@ write_data_frame <- function(attr_group, attr_df) {
   
 }
 
+# Only write _index (obs_names or var_names)
+write_names <- function(attr_group, attr_names) {
+  attr_group$create_dataset("_index", attr_names)
+
+  # Write attributes
+  attr_group$create_attr("_index", "_index", space = H5S$new("scalar"))
+  attr_group$create_attr("encoding-type", "dataframe", space = H5S$new("scalar"))
+  attr_group$create_attr("encoding-version", "0.1.0", space = H5S$new("scalar"))
+  # When there are no columns, null buffer can't be written to a file.
+  attr_group$create_attr("column-order", dtype=h5types$H5T_NATIVE_DOUBLE, space=H5S$new("simple", 0, 0))
+  
+}
+
 write_sparse_matrix <- function(root, x, sparse_type) {
   root$create_dataset("indices", x@i)
   root$create_dataset("indptr", x@p)

@@ -65,7 +65,9 @@ read_with_index <- function(dataset) {
           ref <- values_attr$categories
           values_labels <- ref$dereference(obj = NULL)[[1]]
           # NOTE: number of labels have to be strictly matching the number of unique integer values.
-          values <- factor(as.integer(values), labels = values_labels$read()[1:length(unique(values))])
+          values_notna <- unique(values)
+          values_notna <- values_notna[!is.na(values_notna)]
+          values <- factor(as.integer(values), labels = values_labels$read()[1:length(values_notna)])
         }
       }
       values

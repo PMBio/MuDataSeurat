@@ -239,9 +239,12 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
   })
 
   # global .var will only contain rownames
-  var <- data.frame(row.names = do.call(c, var_names))
+  # NOTE: creating a data.frame fails for objects 
+  # that have the same feature name(s) across different modalities
+  # var <- data.frame(row.names = do.call(c, var_names))
+  # write_data_frame(var_group, var)
   var_group <- h5$create_group("var")
-  write_data_frame(var_group, var)
+  write_names(var_group, do.call(c, var_names))
 
   uns_group <- h5$create_group("uns")
 

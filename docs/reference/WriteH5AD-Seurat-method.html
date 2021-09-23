@@ -40,8 +40,7 @@
 
 
 <meta property="og:title" content="Write one assay to .h5ad — WriteH5AD,Seurat-method" />
-<meta property="og:description" content="This function writes the data of one of the assays (modalities) of a Seurat object 
-into an AnnData-compatible .h5ad file." />
+<meta property="og:description" content="This function writes the data of one of the assays (modalities) of a Seurat object into an .h5ad file." />
 
 
 
@@ -122,13 +121,32 @@ into an AnnData-compatible .h5ad file." />
     </div>
 
     <div class="ref-description">
-    <p>This function writes the data of one of the assays (modalities) of a Seurat object 
-into an AnnData-compatible .h5ad file.</p>
+    <p>This function writes the data of one of the assays (modalities) of a <code>Seurat</code> object into an .h5ad file.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Seurat</span>
 <span class='fu'>WriteH5AD</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>file</span>, assay <span class='op'>=</span> <span class='cn'>NULL</span>, overwrite <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>object</th>
+      <td><p><code>Seurat</code> object.</p></td>
+    </tr>
+    <tr>
+      <th>file</th>
+      <td><p>Path to the .h5ad file.</p></td>
+    </tr>
+    <tr>
+      <th>assay</th>
+      <td><p>Assay to write; can be omitted if there is a single assay in the object.</p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>Boolean value to indicate if to overwrite the <code>file</code> if it exists (<code>TRUE</code> by default).</p></td>
+    </tr>
+    </table>
 
 
   </div>

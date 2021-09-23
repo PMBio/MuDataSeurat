@@ -116,8 +116,8 @@ head(cbmc_r@meta.data[,1:4])
 Features metadata is also recovered:
 
 ```{r}
-head(cbmc_u[["RNA"]]@meta.features[,1:4])
-head(cbmc_r[["RNA"]]@meta.features[,1:4])
+head(cbmc_u[["RNA"]]@meta.features)
+head(cbmc_r[["RNA"]]@meta.features)
 ```
 
 # H5AD files

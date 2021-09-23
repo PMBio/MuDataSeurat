@@ -2,7 +2,7 @@ setGeneric("WriteH5MU", function(object, file, overwrite = TRUE) standardGeneric
 setGeneric("WriteH5AD", function(object, file, assay = NULL, overwrite = TRUE) standardGeneric("WriteH5AD"))
 
 #' A helper function to write a modality (an assay) to an .h5mu file
-#'
+#' 
 #' @keywords internal
 #' 
 #' @import hdf5r

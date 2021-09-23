@@ -1,6 +1,6 @@
 #' Read an .h5mu file and create a \code{\link{Seurat}} object.
 #'
-#' @param file Path to the .h5mu file.
+#' @param file Path to the .h5ad file.
 #'
 #' @return A \code{\link{Seurat}} object
 #'
@@ -101,8 +101,10 @@ ReadH5AD <- function(file) {
 #'
 #' @import hdf5r Matrix Seurat
 #'
-#' @return A \code{Seurat} object
-#' '
+#' @param file Path to the .h5mu file.
+#'
+#' @return A \code{\link{Seurat}} object
+#'
 #' @export ReadH5MU
 ReadH5MU <- function(file) {    
   # Connect to the the file

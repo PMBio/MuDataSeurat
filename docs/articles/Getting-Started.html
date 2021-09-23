@@ -111,42 +111,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">MuDataSeurat</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat">Seurat</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.satijalab.org/seurat">SeuratData</a></span><span class="op">)</span>
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
+<span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.satijalab.org/seurat">SeuratData</a></span><span class="op">)</span><span class="op">)</span>
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://hhoeflin.github.io/hdf5r/">hdf5r</a></span><span class="op">)</span></code></pre></div>
 </div>
@@ -155,151 +120,7 @@
 <a href="#writing-h5mu-files" class="anchor"></a>Writing H5MU files</h1>
 <p>We’ll use a Seurat object distributed via <code>SeuratDisk</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="http://www.satijalab.org/seurat/reference/InstallData.html">InstallData</a></span><span class="op">(</span><span class="st">"cbmc"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-<span class="co">#&gt; Warning: The following packages are already installed and will not be</span>
-<span class="co">#&gt; reinstalled: cbmc</span>
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="http://www.satijalab.org/seurat/reference/InstallData.html">InstallData</a></span><span class="op">(</span><span class="st">"cbmc"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"cbmc"</span><span class="op">)</span>
 <span class="va">cbmc</span>
 <span class="co">#&gt; An object of class Seurat </span>
@@ -318,7 +139,13 @@
 <span class="va">adt</span><span class="op">@</span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">adt_data</span>
 
 <span class="va">cbmc_u</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://satijalab.org/seurat/reference/CreateSeuratObject.html">CreateSeuratObject</a></span><span class="op">(</span><span class="va">cbmc</span><span class="op">[[</span><span class="st">"RNA"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-<span class="va">cbmc_u</span><span class="op">[[</span><span class="st">"ADT"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">adt</span></code></pre></div>
+<span class="va">cbmc_u</span><span class="op">[[</span><span class="st">"ADT"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">adt</span>
+<span class="fu"><a href="https://satijalab.org/seurat/reference/DefaultAssay.html">DefaultAssay</a></span><span class="op">(</span><span class="va">cbmc_u</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"ADT"</span>
+<span class="va">cbmc_u</span>
+<span class="co">#&gt; An object of class Seurat </span>
+<span class="co">#&gt; 20511 features across 8617 samples within 2 assays </span>
+<span class="co">#&gt; Active assay: ADT (10 features, 0 variable features)</span>
+<span class="co">#&gt;  1 other assay present: RNA</span></code></pre></div>
 <p>We can then use <code>WriteH5MU()</code> to write the contents of the <code>cbmc</code> object to an <code>H5MU</code> file:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">WriteH5MU</span><span class="op">(</span><span class="va">cbmc_u</span>, <span class="st">"cbmc.h5mu"</span><span class="op">)</span>
@@ -384,12 +211,6 @@
 <span class="co">#&gt; GAATAAGAGATCCCAT SeuratProject       1007           10      21842</span>
 <span class="co">#&gt; GTGCATAGTCATGCAT SeuratProject       1642           10      17679</span>
 <span class="co">#&gt; TACACGACACATCCGG SeuratProject       1164           10      18712</span></code></pre></div>
-<p>Features metadata is also recovered:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cbmc_u</span><span class="op">[[</span><span class="st">"RNA"</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">meta.features</span><span class="op">)</span>
-<span class="co">#&gt; data frame with 0 columns and 6 rows</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">cbmc_r</span><span class="op">[[</span><span class="st">"RNA"</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">meta.features</span><span class="op">)</span>
-<span class="co">#&gt; data frame with 0 columns and 6 rows</span></code></pre></div>
 </div>
 </div>
 <div id="h5ad-files" class="section level1">
@@ -397,167 +218,19 @@
 <a href="#h5ad-files" class="anchor"></a>H5AD files</h1>
 <p>If a <code>Seurat</code> object contains a single modality (assay), it can be written to an H5AD file.</p>
 <p>For demonstration, we’ll use a Seurat object with scRNA-seq counts distributed via <code>SeuratDisk</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://mojaveazure.github.io/seurat-disk/">SeuratDisk</a></span><span class="op">)</span>
-<span class="co">#&gt; Registered S3 method overwritten by 'SeuratDisk':</span>
-<span class="co">#&gt;   method            from  </span>
-<span class="co">#&gt;   as.sparse.H5Group Seurat</span>
-<span class="fu"><a href="http://www.satijalab.org/seurat/reference/InstallData.html">InstallData</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-<span class="co">#&gt; Warning: The following packages are already installed and will not be</span>
-<span class="co">#&gt; reinstalled: pbmc3k</span>
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
-
-<span class="co">#&gt; Warning in if (is.na(desc)) {: the condition has length &gt; 1 and only the first</span>
-<span class="co">#&gt; element will be used</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/warning.html">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="http://www.satijalab.org/seurat/reference/InstallData.html">InstallData</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span>
 <span class="va">pbmc3k</span>
 <span class="co">#&gt; An object of class Seurat </span>
 <span class="co">#&gt; 13714 features across 2700 samples within 1 assay </span>
 <span class="co">#&gt; Active assay: RNA (13714 features, 0 variable features)</span></code></pre></div>
 <p>We can use <code>WriteH5AD()</code> to write the contents of the <code>pbmc3k</code> object to an <code>H5AD</code> file since this dataset contains a single modality (assay):</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">WriteH5AD</span><span class="op">(</span><span class="va">pbmc3k</span>, <span class="st">"pbmc3k.h5ad"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>This data can be retrieved from an H5AD file with <code>ReadH5AD</code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbmc3k_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5AD.html">ReadH5AD</a></span><span class="op">(</span><span class="st">"pbmc3k.h5ad"</span><span class="op">)</span>
 <span class="va">pbmc3k_r</span>
 <span class="co">#&gt; An object of class Seurat </span>
@@ -576,7 +249,7 @@
 <div id="session-info" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-info" class="anchor"></a>Session Info</h1>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; R version 4.1.0 (2021-05-18)</span>
 <span class="co">#&gt; Platform: x86_64-apple-darwin17.0 (64-bit)</span>
@@ -593,54 +266,53 @@
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] SeuratDisk_0.0.0.9019   hdf5r_1.3.4             pbmc3k.SeuratData_3.1.4</span>
-<span class="co">#&gt; [4] cbmc.SeuratData_3.1.4   SeuratData_0.2.1        SeuratObject_4.0.2     </span>
-<span class="co">#&gt; [7] Seurat_4.0.4            MuDataSeurat_0.0.0.9000 BiocStyle_2.20.2       </span>
+<span class="co">#&gt; [1] hdf5r_1.3.4             pbmc3k.SeuratData_3.1.4 cbmc.SeuratData_3.1.4  </span>
+<span class="co">#&gt; [4] SeuratData_0.2.1        SeuratObject_4.0.2      Seurat_4.0.4           </span>
+<span class="co">#&gt; [7] MuDataSeurat_0.0.0.9000 BiocStyle_2.20.2       </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] systemfonts_1.0.2     plyr_1.8.6            igraph_1.2.6         </span>
-<span class="co">#&gt;   [4] lazyeval_0.2.2        splines_4.1.0         listenv_0.8.0        </span>
-<span class="co">#&gt;   [7] scattermore_0.7       ggplot2_3.3.3         digest_0.6.27        </span>
-<span class="co">#&gt;  [10] htmltools_0.5.1.1     fansi_0.5.0           magrittr_2.0.1       </span>
-<span class="co">#&gt;  [13] memoise_2.0.0         tensor_1.5            cluster_2.1.2        </span>
-<span class="co">#&gt;  [16] ROCR_1.0-11           globals_0.14.0        matrixStats_0.59.0   </span>
-<span class="co">#&gt;  [19] pkgdown_1.6.1         spatstat.sparse_2.0-0 colorspace_2.0-1     </span>
-<span class="co">#&gt;  [22] rappdirs_0.3.3        ggrepel_0.9.1         textshaping_0.3.5    </span>
-<span class="co">#&gt;  [25] xfun_0.23             dplyr_1.0.6           crayon_1.4.1         </span>
-<span class="co">#&gt;  [28] jsonlite_1.7.2        spatstat.data_2.1-0   survival_3.2-11      </span>
-<span class="co">#&gt;  [31] zoo_1.8-9             glue_1.4.2            polyclip_1.10-0      </span>
-<span class="co">#&gt;  [34] gtable_0.3.0          leiden_0.3.8          future.apply_1.7.0   </span>
-<span class="co">#&gt;  [37] abind_1.4-5           scales_1.1.1          DBI_1.1.1            </span>
-<span class="co">#&gt;  [40] miniUI_0.1.1.1        Rcpp_1.0.7            viridisLite_0.4.0    </span>
-<span class="co">#&gt;  [43] xtable_1.8-4          reticulate_1.20       spatstat.core_2.1-2  </span>
-<span class="co">#&gt;  [46] bit_4.0.4             htmlwidgets_1.5.3     httr_1.4.2           </span>
-<span class="co">#&gt;  [49] RColorBrewer_1.1-2    ellipsis_0.3.2        ica_1.0-2            </span>
-<span class="co">#&gt;  [52] pkgconfig_2.0.3       sass_0.4.0            uwot_0.1.10          </span>
-<span class="co">#&gt;  [55] deldir_0.2-10         utf8_1.2.1            tidyselect_1.1.1     </span>
-<span class="co">#&gt;  [58] rlang_0.4.11          reshape2_1.4.4        later_1.2.0          </span>
-<span class="co">#&gt;  [61] munsell_0.5.0         tools_4.1.0           cachem_1.0.5         </span>
-<span class="co">#&gt;  [64] cli_2.5.0             generics_0.1.0        ggridges_0.5.3       </span>
-<span class="co">#&gt;  [67] evaluate_0.14         stringr_1.4.0         fastmap_1.1.0        </span>
-<span class="co">#&gt;  [70] yaml_2.2.1            ragg_1.1.3            goftest_1.2-2        </span>
-<span class="co">#&gt;  [73] knitr_1.33            bit64_4.0.5           fs_1.5.0             </span>
-<span class="co">#&gt;  [76] fitdistrplus_1.1-5    purrr_0.3.4           RANN_2.6.1           </span>
-<span class="co">#&gt;  [79] pbapply_1.4-3         future_1.21.0         nlme_3.1-152         </span>
-<span class="co">#&gt;  [82] mime_0.10             compiler_4.1.0        rstudioapi_0.13      </span>
-<span class="co">#&gt;  [85] plotly_4.9.4          png_0.1-7             spatstat.utils_2.2-0 </span>
-<span class="co">#&gt;  [88] tibble_3.1.2          bslib_0.2.5.1         stringi_1.6.2        </span>
-<span class="co">#&gt;  [91] ps_1.6.0              desc_1.3.0            lattice_0.20-44      </span>
-<span class="co">#&gt;  [94] Matrix_1.3-4          vctrs_0.3.8           pillar_1.6.1         </span>
-<span class="co">#&gt;  [97] lifecycle_1.0.0       BiocManager_1.30.16   spatstat.geom_2.1-0  </span>
-<span class="co">#&gt; [100] lmtest_0.9-38         jquerylib_0.1.4       RcppAnnoy_0.0.18     </span>
-<span class="co">#&gt; [103] data.table_1.14.0     cowplot_1.1.1         irlba_2.3.3          </span>
-<span class="co">#&gt; [106] httpuv_1.6.1          patchwork_1.1.1       R6_2.5.0             </span>
-<span class="co">#&gt; [109] bookdown_0.22         promises_1.2.0.1      KernSmooth_2.23-20   </span>
-<span class="co">#&gt; [112] gridExtra_2.3         parallelly_1.26.0     codetools_0.2-18     </span>
-<span class="co">#&gt; [115] MASS_7.3-54           assertthat_0.2.1      rprojroot_2.0.2      </span>
-<span class="co">#&gt; [118] withr_2.4.2           sctransform_0.3.2     mgcv_1.8-36          </span>
-<span class="co">#&gt; [121] parallel_4.1.0        grid_4.1.0            rpart_4.1-15         </span>
-<span class="co">#&gt; [124] tidyr_1.1.3           rmarkdown_2.9         Rtsne_0.15           </span>
-<span class="co">#&gt; [127] shiny_1.6.0</span></code></pre></div>
+<span class="co">#&gt;   [1] Rtsne_0.15            colorspace_2.0-1      deldir_0.2-10        </span>
+<span class="co">#&gt;   [4] ellipsis_0.3.2        ggridges_0.5.3        rprojroot_2.0.2      </span>
+<span class="co">#&gt;   [7] fs_1.5.0              rstudioapi_0.13       spatstat.data_2.1-0  </span>
+<span class="co">#&gt;  [10] leiden_0.3.8          listenv_0.8.0         bit64_4.0.5          </span>
+<span class="co">#&gt;  [13] ggrepel_0.9.1         fansi_0.5.0           codetools_0.2-18     </span>
+<span class="co">#&gt;  [16] splines_4.1.0         cachem_1.0.5          knitr_1.33           </span>
+<span class="co">#&gt;  [19] polyclip_1.10-0       jsonlite_1.7.2        ica_1.0-2            </span>
+<span class="co">#&gt;  [22] cluster_2.1.2         png_0.1-7             uwot_0.1.10          </span>
+<span class="co">#&gt;  [25] spatstat.sparse_2.0-0 shiny_1.6.0           sctransform_0.3.2    </span>
+<span class="co">#&gt;  [28] BiocManager_1.30.16   compiler_4.1.0        httr_1.4.2           </span>
+<span class="co">#&gt;  [31] assertthat_0.2.1      Matrix_1.3-4          fastmap_1.1.0        </span>
+<span class="co">#&gt;  [34] lazyeval_0.2.2        cli_2.5.0             later_1.2.0          </span>
+<span class="co">#&gt;  [37] htmltools_0.5.1.1     tools_4.1.0           igraph_1.2.6         </span>
+<span class="co">#&gt;  [40] gtable_0.3.0          glue_1.4.2            RANN_2.6.1           </span>
+<span class="co">#&gt;  [43] reshape2_1.4.4        dplyr_1.0.6           rappdirs_0.3.3       </span>
+<span class="co">#&gt;  [46] Rcpp_1.0.7            scattermore_0.7       jquerylib_0.1.4      </span>
+<span class="co">#&gt;  [49] pkgdown_1.6.1         vctrs_0.3.8           nlme_3.1-152         </span>
+<span class="co">#&gt;  [52] lmtest_0.9-38         xfun_0.23             stringr_1.4.0        </span>
+<span class="co">#&gt;  [55] ps_1.6.0              globals_0.14.0        mime_0.10            </span>
+<span class="co">#&gt;  [58] miniUI_0.1.1.1        lifecycle_1.0.0       irlba_2.3.3          </span>
+<span class="co">#&gt;  [61] goftest_1.2-2         future_1.21.0         MASS_7.3-54          </span>
+<span class="co">#&gt;  [64] zoo_1.8-9             scales_1.1.1          spatstat.core_2.1-2  </span>
+<span class="co">#&gt;  [67] spatstat.utils_2.2-0  ragg_1.1.3            promises_1.2.0.1     </span>
+<span class="co">#&gt;  [70] parallel_4.1.0        RColorBrewer_1.1-2    yaml_2.2.1           </span>
+<span class="co">#&gt;  [73] gridExtra_2.3         memoise_2.0.0         reticulate_1.20      </span>
+<span class="co">#&gt;  [76] pbapply_1.4-3         ggplot2_3.3.3         sass_0.4.0           </span>
+<span class="co">#&gt;  [79] rpart_4.1-15          stringi_1.6.2         desc_1.3.0           </span>
+<span class="co">#&gt;  [82] rlang_0.4.11          pkgconfig_2.0.3       systemfonts_1.0.2    </span>
+<span class="co">#&gt;  [85] matrixStats_0.59.0    evaluate_0.14         lattice_0.20-44      </span>
+<span class="co">#&gt;  [88] tensor_1.5            ROCR_1.0-11           purrr_0.3.4          </span>
+<span class="co">#&gt;  [91] patchwork_1.1.1       htmlwidgets_1.5.3     bit_4.0.4            </span>
+<span class="co">#&gt;  [94] cowplot_1.1.1         tidyselect_1.1.1      parallelly_1.26.0    </span>
+<span class="co">#&gt;  [97] RcppAnnoy_0.0.18      plyr_1.8.6            magrittr_2.0.1       </span>
+<span class="co">#&gt; [100] bookdown_0.22         R6_2.5.0              generics_0.1.0       </span>
+<span class="co">#&gt; [103] DBI_1.1.1             mgcv_1.8-36           pillar_1.6.1         </span>
+<span class="co">#&gt; [106] fitdistrplus_1.1-5    abind_1.4-5           survival_3.2-11      </span>
+<span class="co">#&gt; [109] tibble_3.1.2          future.apply_1.7.0    crayon_1.4.1         </span>
+<span class="co">#&gt; [112] KernSmooth_2.23-20    utf8_1.2.1            spatstat.geom_2.1-0  </span>
+<span class="co">#&gt; [115] plotly_4.9.4          rmarkdown_2.9         grid_4.1.0           </span>
+<span class="co">#&gt; [118] data.table_1.14.0     digest_0.6.27         xtable_1.8-4         </span>
+<span class="co">#&gt; [121] tidyr_1.1.3           httpuv_1.6.1          textshaping_0.3.5    </span>
+<span class="co">#&gt; [124] munsell_0.5.0         viridisLite_0.4.0     bslib_0.2.5.1</span></code></pre></div>
 </div>
   </div>
 

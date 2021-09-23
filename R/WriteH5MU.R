@@ -175,8 +175,12 @@ WriteH5ADHelper <- function(object, assay, root) {
 
 #' Write one assay to .h5ad
 #' 
-#' This function writes the data of one of the assays (modalities) of a Seurat object 
-#' into an AnnData-compatible .h5ad file.
+#' This function writes the data of one of the assays (modalities) of a \code{Seurat} object into an .h5ad file.
+#'
+#' @param object \code{Seurat} object.
+#' @param file Path to the .h5ad file.
+#' @param assay Assay to write; can be omitted if there is a single assay in the object.
+#' @param overwrite Boolean value to indicate if to overwrite the \code{file} if it exists (\code{TRUE} by default).
 #'
 #' @import hdf5r
 #'
@@ -214,6 +218,10 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
 #' Create an .h5mu file with data from a \code{\link{Seurat}} object
 #' 
 #' @description Save \code{\link{Seurat}} object to .h5mu file
+#'
+#' @param object \code{Seurat} object.
+#' @param file Path to the .h5mu file.
+#' @param overwrite Boolean value to indicate if to overwrite the \code{file} if it exists (\code{TRUE} by default).
 #'
 #' @import hdf5r
 #'

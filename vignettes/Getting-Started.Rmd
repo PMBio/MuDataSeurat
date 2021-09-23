@@ -1,0 +1,161 @@
+---
+title: "Getting started with MuData for Seurat"
+author:
+- name: "Danila Bredikhin"
+  affiliation: "European Molecular Biology Laboratory, Heidelberg, Germany"
+  email: "danila.bredikhin@embl.de"
+- name: "Ilia Kats"
+  affiliation: "German Cancer Research Center, Heidelberg, Germany"
+  email: "i.kats@dkfz-heidelberg.de"
+date: "`r Sys.Date()`"
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Getting started with MuDataMae}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>"
+)
+```
+
+# Introduction
+
+Multimodal data format — [MuData](https://mudata.readthedocs.io/) — [has been introduced](https://www.biorxiv.org/content/10.1101/2021.06.01.445670v1) to address the need for cross-platform standard for sharing large-scale multimodal omics data. Importantly, it develops ideas of and is compatible with [AnnData](https://anndata.readthedocs.io/) standard for storing raw and derived data for unimodal datasets.
+
+In R, multimodal datasets can be stored in [Seurat](https://satijalab.org/seurat/) objects. This `MuDataSeurat` package demonstrates how data can be read from MuData files (H5MU) into Seurat objects as well as how information from Seurat objects can be saved into H5MU files.
+
+# Installation
+
+The most recent `MuDataSeurat` build can be installed from GitHub:
+
+```{r, eval = FALSE}
+library(remotes)
+remotes::install_github("PMBio/MuDataSeurat")
+```
+
+# Loading libraries
+
+```{r setup, message = FALSE}
+library(MuDataSeurat)
+library(Seurat)
+library(SeuratData)
+
+library(hdf5r)
+```
+
+# Writing H5MU files
+
+We'll use a Seurat object distributed via `SeuratDisk`:
+
+```{r}
+InstallData("cbmc")
+data("cbmc")
+cbmc
+```
+
+First, we make variable names unique across modalities:
+
+```{r}
+# Append -ADT to feature names in the ADT assay
+adt_counts <- cbmc[["ADT"]]@counts
+rownames(adt_counts) <- paste(rownames(adt_counts), "ADT", sep = "-")
+adt_data <- cbmc[["ADT"]]@data
+rownames(adt_data) <- rownames(adt_counts)
+
+adt <- CreateAssayObject(counts = adt_counts)
+adt@data <- adt_data
+
+cbmc_u <- CreateSeuratObject(cbmc[["RNA"]])
+cbmc_u[["ADT"]] <- adt
+```
+
+We can then use `WriteH5MU()` to write the contents of the `cbmc` object to an `H5MU` file:
+
+```{r}
+WriteH5MU(cbmc_u, "cbmc.h5mu")
+```
+
+# Reading H5MU files
+
+We can manually check the top level of the structure of the file:
+
+```{r}
+h5 <- H5File$new("cbmc.h5mu", mode = "r")
+h5
+```
+
+Or dig deeper into the file:
+
+```{r}
+h5[["mod"]]
+h5$close()
+```
+
+## Creating Seurat objects from H5MU files
+
+This package provides `ReadH5MU` to create an object with data from an H5MU file. Since H5MU structure has been designed to accommodate more structured information than Seurat, only some data will be read. For instance, Seurat has no support for loading multimodal embeddings or pairwise graphs.
+
+```{r}
+cbmc_r <- ReadH5MU("cbmc.h5mu")
+cbmc_r
+```
+
+Importantly, we recover the information from the original Seurat object:
+
+```{r}
+head(cbmc_u@meta.data[,1:4])
+head(cbmc_r@meta.data[,1:4])
+```
+
+Features metadata is also recovered:
+
+```{r}
+head(cbmc_u[["RNA"]]@meta.features)
+head(cbmc_r[["RNA"]]@meta.features)
+```
+
+# H5AD files
+
+If a `Seurat` object contains a single modality (assay), it can be written to an H5AD file.
+
+For demonstration, we'll use a Seurat object with scRNA-seq counts distributed via `SeuratDisk`:
+
+```{r}
+library(SeuratDisk)
+InstallData("pbmc3k")
+data("pbmc3k")
+pbmc3k
+```
+
+We can use `WriteH5AD()` to write the contents of the `pbmc3k` object to an `H5AD` file since this dataset contains a single modality (assay):
+
+```{r}
+WriteH5AD(pbmc3k, "pbmc3k.h5ad")
+```
+
+This data can be retrieved from an H5AD file with `ReadH5AD`:
+
+```{r}
+pbmc3k_r <- ReadH5AD("pbmc3k.h5ad")
+pbmc3k_r
+```
+
+# References
+
+- [Muon: multimodal omics analysis framework](https://www.biorxiv.org/content/10.1101/2021.06.01.445670) preprint
+
+- [mudata](https://mudata.readthedocs.io/) (Python) documentation
+
+- muon [documentation](https://muon.readthedocs.io/) and [web page](https://gtca.github.io/muon/)
+
+# Session Info
+
+```{r}
+sessionInfo()
+```

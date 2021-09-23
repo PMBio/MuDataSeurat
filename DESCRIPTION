@@ -2,7 +2,7 @@ Package: MuDataSeurat
 Title: MuData serialization for Seurat
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Danila",
+    c(person(given = "Danila",
            family = "Bredikhin",
            role = c("aut", "cre"),
            email = "danila.bredikhin@embl.de",
@@ -12,8 +12,13 @@ Authors@R:
            role = c("aut"),
            email = "i.kats@dkfz-heidelberg.de",
            comment = c(ORCID = "0000-0001-5220-5671")))
+Maintainer: Danila Bredikhin <danila.bredikhin@embl.de>
 Description: Save Seurat object to h5mu files
 Imports: hdf5r, Matrix, Seurat
+Suggests:
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

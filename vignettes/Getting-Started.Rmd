@@ -44,7 +44,7 @@ remotes::install_github("PMBio/MuDataSeurat")
 ```{r setup, message = FALSE}
 library(MuDataSeurat)
 library(Seurat)
-library(SeuratData)
+suppressWarnings(library(SeuratData))
 
 library(hdf5r)
 ```
@@ -54,7 +54,7 @@ library(hdf5r)
 We'll use a Seurat object distributed via `SeuratDisk`:
 
 ```{r}
-InstallData("cbmc")
+suppressWarnings(InstallData("cbmc"))
 data("cbmc")
 cbmc
 ```
@@ -73,6 +73,8 @@ adt@data <- adt_data
 
 cbmc_u <- CreateSeuratObject(cbmc[["RNA"]])
 cbmc_u[["ADT"]] <- adt
+DefaultAssay(cbmc_u) <- "ADT"
+cbmc_u
 ```
 
 We can then use `WriteH5MU()` to write the contents of the `cbmc` object to an `H5MU` file:
@@ -113,13 +115,6 @@ head(cbmc_u@meta.data[,1:4])
 head(cbmc_r@meta.data[,1:4])
 ```
 
-Features metadata is also recovered:
-
-```{r}
-head(cbmc_u[["RNA"]]@meta.features)
-head(cbmc_r[["RNA"]]@meta.features)
-```
-
 # H5AD files
 
 If a `Seurat` object contains a single modality (assay), it can be written to an H5AD file.
@@ -127,8 +122,7 @@ If a `Seurat` object contains a single modality (assay), it can be written to an
 For demonstration, we'll use a Seurat object with scRNA-seq counts distributed via `SeuratDisk`:
 
 ```{r}
-library(SeuratDisk)
-InstallData("pbmc3k")
+suppressWarnings(InstallData("pbmc3k"))
 data("pbmc3k")
 pbmc3k
 ```

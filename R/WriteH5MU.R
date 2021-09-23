@@ -1,11 +1,10 @@
 setGeneric("WriteH5MU", function(object, file, overwrite = TRUE) standardGeneric("WriteH5MU"))
 setGeneric("WriteH5AD", function(object, file, assay = NULL, overwrite = TRUE) standardGeneric("WriteH5AD"))
 
-#' @description Save an assay to .h5ad / AnnData object
+#' A helper function to write a modality (an assay) to an .h5mu file
 #'
 #' @import hdf5r
 #' @importFrom Matrix t
-#'
 WriteH5ADHelper <- function(object, assay, root) {
 
   mod_object <- Seurat::GetAssay(object, assay)
@@ -210,9 +209,9 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
   TRUE
 })
 
-#' @details Seurat-helpers
-#'
-#' @description Save Seurat object to .h5mu file
+#' Create an .h5mu file with data from a \code{\link{Seurat}} object
+#' 
+#' @description Save \code{\link{Seurat}} object to .h5mu file
 #'
 #' @import hdf5r
 #'

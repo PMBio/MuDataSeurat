@@ -37,6 +37,8 @@ library(MuDataSeurat)
 WriteH5MU(bm, "bmcite.h5mu")
 ```
 
+Please note that only standardised parts of the object are written to the file, and extra information from specific methods, stored in the Seurat object, might be omitted upon writing the file.
+
 ### Reading files
 
 ```R

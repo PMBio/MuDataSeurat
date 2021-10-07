@@ -14,5 +14,9 @@
 \item{overwrite}{Boolean value to indicate if to overwrite the \code{file} if it exists (\code{TRUE} by default).}
 }
 \description{
-Save \code{\link{Seurat}} object to .h5mu file
+Save \code{\link{Seurat}} object to .h5mu file.
+The behavior of this function if NAs are present is undefined.
+}
+\details{
+The following slots are saved: count matrices (`@counts`, `@scale.data` and `@data`), `@metadata`, `@reductions`, `@feature.loadings`, `@graphs`.
 }

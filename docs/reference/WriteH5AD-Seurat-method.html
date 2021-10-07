@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Write one assay to .h5ad — WriteH5AD,Seurat-method" />
-<meta property="og:description" content="This function writes the data of one of the assays (modalities) of a Seurat object into an .h5ad file." />
+<meta property="og:description" content="This function writes the data of one of the assays (modalities) of a Seurat object into an .h5ad file.
+The behavior of this function if NAs are present is undefined." />
 
 
 
@@ -121,7 +122,8 @@
     </div>
 
     <div class="ref-description">
-    <p>This function writes the data of one of the assays (modalities) of a <code>Seurat</code> object into an .h5ad file.</p>
+    <p>This function writes the data of one of the assays (modalities) of a <code>Seurat</code> object into an .h5ad file.
+The behavior of this function if NAs are present is undefined.</p>
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Seurat</span>
@@ -148,6 +150,9 @@
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The following slots are saved: count matrices (`@counts`, `@scale.data` and `@data`), `@metadata`, `@reductions`, `@feature.loadings`, `@graphs`.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

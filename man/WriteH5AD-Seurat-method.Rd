@@ -17,4 +17,8 @@
 }
 \description{
 This function writes the data of one of the assays (modalities) of a \code{Seurat} object into an .h5ad file.
+The behavior of this function if NAs are present is undefined.
+}
+\details{
+The following slots are saved: count matrices (`@counts`, `@scale.data` and `@data`), `@metadata`, `@reductions`, `@feature.loadings`, `@graphs`.
 }

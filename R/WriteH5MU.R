@@ -178,6 +178,8 @@ WriteH5ADHelper <- function(object, assay, root) {
 #' This function writes the data of one of the assays (modalities) of a \code{Seurat} object into an .h5ad file.
 #' The behavior of this function if NAs are present is undefined.
 #'
+#' The following slots are saved: count matrices (`@counts`, `@scale.data` and `@data`), `@metadata`, `@reductions`, `@feature.loadings`, `@graphs`.
+#'
 #' @param object \code{Seurat} object.
 #' @param file Path to the .h5ad file.
 #' @param assay Assay to write; can be omitted if there is a single assay in the object.
@@ -220,6 +222,8 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
 #' 
 #' Save \code{\link{Seurat}} object to .h5mu file.
 #' The behavior of this function if NAs are present is undefined.
+#'
+#' The following slots are saved: count matrices (`@counts`, `@scale.data` and `@data`), `@metadata`, `@reductions`, `@feature.loadings`, `@graphs`.
 #'
 #' @param object \code{Seurat} object.
 #' @param file Path to the .h5mu file.

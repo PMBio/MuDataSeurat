@@ -217,7 +217,8 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
 
 #' Create an .h5mu file with data from a \code{\link{Seurat}} object
 #' 
-#' @description Save \code{\link{Seurat}} object to .h5mu file
+#' Save \code{\link{Seurat}} object to .h5mu file
+#' The behavior of this function if NAs are present is undefined.
 #'
 #' @param object \code{Seurat} object.
 #' @param file Path to the .h5mu file.

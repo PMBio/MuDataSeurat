@@ -1,5 +1,7 @@
 # MuDataSeurat
 
+[Documentation](https://pmbio.github.io/MuDataSeurat/) | [Preprint](https://www.biorxiv.org/content/10.1101/2021.06.01.445670v1) | [Discord](https://discord.com/invite/MMsgDhnSwQ)
+
 `MuDataSeurat` is a package that provides I/O funcitonality for `.h5mu` files and [Seurat](https://satijalab.org/seurat/) objects.
 
 You can learn more about multimodal data containers in the [`mudata` documentation](https://mudata.readthedocs.io/en/latest/io/mudata.html).

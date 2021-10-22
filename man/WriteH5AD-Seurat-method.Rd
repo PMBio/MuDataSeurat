@@ -6,7 +6,19 @@
 \usage{
 \S4method{WriteH5AD}{Seurat}(object, file, assay = NULL, overwrite = TRUE)
 }
+\arguments{
+\item{object}{\code{Seurat} object.}
+
+\item{file}{Path to the .h5ad file.}
+
+\item{assay}{Assay to write; can be omitted if there is a single assay in the object.}
+
+\item{overwrite}{Boolean value to indicate if to overwrite the \code{file} if it exists (\code{TRUE} by default).}
+}
 \description{
-This function writes the data of one of the assays (modalities) of a Seurat object 
-into an AnnData-compatible .h5ad file.
+This function writes the data of one of the assays (modalities) of a \code{Seurat} object into an .h5ad file.
+The behavior of this function if NAs are present is undefined.
+}
+\details{
+The following slots are saved: count matrices (`@counts`, `@scale.data` and `@data`), `@metadata`, `@reductions`, `@feature.loadings`, `@graphs`.
 }

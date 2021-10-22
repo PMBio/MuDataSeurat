@@ -224,7 +224,8 @@ ReadH5MU <- function(file) {
     maybe_loadings <- matrix()
     if (emb %in% names(OBSM2VARM)) {
       varm_key = OBSM2VARM[[emb]]
-      maybe_loadings <- loadings[[varm_key]]
+      if (hasName(loadings, varm_key))
+        maybe_loadings <- loadings[[varm_key]]
     }
 
     emb_stdev <- numeric()
@@ -254,7 +255,8 @@ ReadH5MU <- function(file) {
       maybe_loadings <- matrix()
       if (emb %in% names(OBSM2VARM)) {
         varm_key = OBSM2VARM[[emb]]
-        maybe_loadings <- mod_varm[[mod]][[varm_key]]
+        if (hasName(mod_varm[[mod]], varm_key))
+            maybe_loadings <- mod_varm[[mod]][[varm_key]]
       }
 
       emb_stdev <- numeric()

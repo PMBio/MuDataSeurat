@@ -7,15 +7,19 @@ setGeneric("WriteH5AD", function(object, file, assay = NULL, overwrite = TRUE) s
 #' 
 #' @import hdf5r
 #' @importFrom Matrix t
-WriteH5ADHelper <- function(object, assay, root) {
+WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
 
   mod_object <- Seurat::GetAssay(object, assay)
 
   # .obs
   obs_group <- root$create_group("obs")
-  # There is no local metadata in Seurat objects
   obs_names <- colnames(object)
-  obs <- data.frame(row.names = obs_names)
+  # There is no local metadata in Seurat objects
+  if (global) {
+    obs <- object@meta.data
+  } else {
+    obs <- data.frame(row.names = obs_names)
+  }
   write_data_frame(obs_group, obs)
 
   # .var
@@ -66,7 +70,7 @@ WriteH5ADHelper <- function(object, assay, root) {
             # case 2: counts, data, and scale.data are available
             # .X
             x_scaled <- t(Seurat::GetAssayData(mod_object, 'scale.data'))
-            root$create_dataset("X", x_scaled)
+            root$create_dataset("X", t(x_scaled))
             # .raw
             raw_group <- root$create_group("raw")
             if ("i" %in% slotNames(x_data)) {
@@ -211,7 +215,8 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
     assay <- names(object@assays)[1]
   }
   
-  WriteH5ADHelper(object, assay, h5)
+  # "Global" attributes such as metadata have to be written
+  WriteH5ADHelper(object, assay, h5, global = TRUE)
   
   finalize_anndata(h5)
 

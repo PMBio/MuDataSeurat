@@ -82,6 +82,9 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
               # dense matrix
               raw_group$create_dataset("X", t(x_data))
             }
+            # .raw has to contain .var as well
+            raw_var_group <- raw_group$create_group("var")
+            write_data_frame(raw_var_group, var)
           } else {
             # case 3: counts and data are available but not scale.data
             if ("i" %in% slotNames(x_data)) {

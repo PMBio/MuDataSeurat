@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>/404.html</loc>
+  </url>
+  <url>
+    <loc>/articles/Getting-Started.html</loc>
+  </url>
+  <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/authors.html</loc>
+  </url>
+  <url>
+    <loc>/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ReadH5AD.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ReadH5MU.html</loc>
+  </url>
+  <url>
+    <loc>/reference/WriteH5AD.html</loc>
+  </url>
+  <url>
+    <loc>/reference/WriteH5ADHelper.html</loc>
+  </url>
+  <url>
+    <loc>/reference/WriteH5MU.html</loc>
+  </url>
+  <url>
+    <loc>/reference/index.html</loc>
+  </url>
+</urlset>

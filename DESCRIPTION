@@ -19,9 +19,7 @@ Imports: hdf5r, Matrix, Seurat, methods, utils
 Suggests:
     rmarkdown,
     knitr,
-    SeuratData,
     BiocStyle
-Remotes: satijalab/seurat-data
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8

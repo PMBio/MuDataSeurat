@@ -18,8 +18,8 @@ jobs:
       
       - name: Install SeuratData
         if: always()
-        run: install.packages('remotes'); remotes:::install_github('satijalab/seurat-data')
-        shell: Rscript {0}
+        run: Rscript -e "install.packages('remotes'); remotes:::install_github('satijalab/seurat-data')"
+        shell: bash
 
       - uses: r-lib/actions/setup-r@v1
         with:

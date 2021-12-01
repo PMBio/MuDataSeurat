@@ -6,6 +6,9 @@
 \usage{
 ReadH5MU(file)
 }
+\arguments{
+\item{file}{Path to the .h5mu file}
+}
 \value{
 A \code{Seurat} object
 '

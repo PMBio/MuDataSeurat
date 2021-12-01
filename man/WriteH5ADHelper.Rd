@@ -4,7 +4,7 @@
 \alias{WriteH5ADHelper}
 \title{A helper function to write a modality (an assay) to an .h5mu file}
 \usage{
-WriteH5ADHelper(object, assay, root)
+WriteH5ADHelper(object, assay, root, global = FALSE)
 }
 \description{
 A helper function to write a modality (an assay) to an .h5mu file

@@ -12,7 +12,7 @@ ReadH5AD <- function(file) {
   # Get metadata
   obs <- read_with_index(h5[["obs"]])
   var <- read_with_index(h5[["var"]])
-  
+
   # X
   assay <- read_layers_to_assay(h5)
 
@@ -24,12 +24,12 @@ ReadH5AD <- function(file) {
 
   # obsp
   obsp <- read_attr_p(h5, 'obs')
-  
-  # If there are var pairs, there's no place to store it 
+
+  # If there are var pairs, there's no place to store it
   # in the Seurat object
   # var_pairs <- read_attr_p(h5, 'var')
   var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
-  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0) 
+  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
 
   # Create a Seurat object
@@ -80,11 +80,11 @@ ReadH5AD <- function(file) {
     }
 
     srt[[emb_name]] <- Seurat::CreateDimReducObject(
-      embeddings = obsm[[emb]][rownames(obs),,drop=FALSE], 
+      embeddings = obsm[[emb]][rownames(obs),,drop=FALSE],
       loadings = maybe_loadings,
       key = paste0(emb_name, "_"),
       assay = Seurat::DefaultAssay(srt),
-      stdev = emb_stdev 
+      stdev = emb_stdev
     )
   }
 
@@ -99,12 +99,15 @@ ReadH5AD <- function(file) {
 
 #' Create a \code{Seurat} object from .h5mu file contents
 #'
+#' @param file Path to the .h5mu file
+#'
 #' @import hdf5r Matrix Seurat
+#' @importFrom utils hasName
 #'
 #' @return A \code{Seurat} object
 #' '
 #' @export ReadH5MU
-ReadH5MU <- function(file) {    
+ReadH5MU <- function(file) {
   # Connect to the the file
   h5 <- open_and_check_mudata(file)
 
@@ -117,7 +120,7 @@ ReadH5MU <- function(file) {
   # NOTE: there's no global feature metadata in the Seurat object
   # NOTE: these names are currently required to be unique
   ft_metadata <- read_with_index(h5[["var"]])
-  if (ncol(ft_metadata) > 0) 
+  if (ncol(ft_metadata) > 0)
     missing_on_read("/var", "global variables metadata")
 
   # Get (multimodal) embeddings
@@ -131,15 +134,15 @@ ReadH5MU <- function(file) {
   # Get obs pairs
   obs_pairs <- read_attr_p(h5, 'obs')
 
-  # If there are var pairs, there's no place to store it 
+  # If there are var pairs, there's no place to store it
   # in the Seurat object
   var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
-  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0) 
+  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
-  
+
   # mod/.../X, raw, and layers
   modalities <- lapply(assays, function(mod) {
-    assay <- read_layers_to_assay(h5[['mod']][[mod]])
+    assay <- read_layers_to_assay(h5[['mod']][[mod]], mod)
   })
   names(modalities) <- assays
 
@@ -166,14 +169,14 @@ ReadH5MU <- function(file) {
     read_attr_m(h5[['mod']][[mod]], 'var')
   })
   names(mod_varm) <- assays
-  
+
   # mod/.../obsp
   mod_obsp <- lapply(assays, function(mod) {
     read_attr_p(h5[['mod']][[mod]], 'obs')
   })
   names(mod_obsp) <- assays
-  
-  # If there are var pairs in individual modalities, 
+
+  # If there are var pairs in individual modalities,
   # there's no place to store it in the Seurat object.
   for (mod in assays) {
     if ("varp" %in% names(h5[['mod']][[mod]])) {
@@ -183,7 +186,7 @@ ReadH5MU <- function(file) {
     }
   }
   var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
-  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0) 
+  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
 
   # Only common observations can be read
@@ -236,7 +239,7 @@ ReadH5MU <- function(file) {
     }
 
     srt[[emb_name]] <- Seurat::CreateDimReducObject(
-      embeddings = embeddings[[emb]][obs_names,,drop=FALSE], 
+      embeddings = embeddings[[emb]][obs_names,,drop=FALSE],
       loadings = maybe_loadings,
       key = paste0(emb_name, "_"),
       stdev = emb_stdev,
@@ -269,7 +272,7 @@ ReadH5MU <- function(file) {
       srt[[modemb_name]] <- Seurat::CreateDimReducObject(
         embeddings = mod_embeddings[[emb]][obs_names,,drop=FALSE],
         loadings = maybe_loadings,
-        key = paste0(modemb_name, "_"), 
+        key = paste0(modemb_name, "_"),
         stdev = emb_stdev,
         assay = mod,
       )
@@ -277,7 +280,7 @@ ReadH5MU <- function(file) {
   }
 
   # Add graphs
-  
+
   # Only take into account common observations
   if (length(obs_pairs) > 0) {
     srt@graphs <- lapply(obs_pairs, function(graph) {
@@ -297,7 +300,7 @@ ReadH5MU <- function(file) {
       srt@graphs[[graph_name]]@assay.used <- mod
     }
   }
-  
+
 
   # Close the connection
   h5$close_all()

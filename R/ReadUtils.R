@@ -90,7 +90,7 @@ read_with_index <- function(dataset) {
   } else {
     table <- dataset$read()
     dataset_attr <- h5attributes(dataset)
-    
+
     indexcol <- "_index"
     if ("_index" %in% names(dataset_attr)) {
       indexcol <- dataset_attr$`_index`
@@ -147,14 +147,14 @@ read_matrix <- function(dataset) {
 }
 
 #' @import Matrix
-read_layers_to_assay <- function(root) {
+read_layers_to_assay <- function(root, modalityname="") {
   X <- read_matrix(root[['X']])
 
   var <- read_with_index(root[['var']])
 
   obs <- read_with_index(root[['obs']])
   if (is("obs", "data.frame"))
-    rownames(obs) <- paste(mod, rownames(obs), sep="-")
+    rownames(obs) <- paste(modalityname, rownames(obs), sep="-")
 
   colnames(X) <- rownames(obs)
   rownames(X) <- rownames(var)
@@ -167,7 +167,7 @@ read_layers_to_assay <- function(root) {
     rownames(raw.X) <- rownames(raw.var)
     colnames(raw.X) <- colnames(X)
     if (nrow(raw.X) != nrow(X)) {
-      warning(paste0("Only a subset of mod/", mod, "/raw/X is loaded, variables (features) that are not present in mod/", mod, "/X are discarded."))
+      warning(paste0("Only a subset of mod/", modalityname, "/raw/X is loaded, variables (features) that are not present in mod/", modalityname, "/X are discarded."))
       raw.X <- raw.X[rownames(X),]
     }
   }
@@ -184,7 +184,7 @@ read_layers_to_assay <- function(root) {
     names(layers) <- root[['layers']]$names
     custom_layers <- names(layers)[!names(layers) %in% c("counts")]
     if (length(custom_layers) > 0) {
-      missing_on_read(paste0("some of mod/", mod, "/layers"), "custom layers, unless labeled 'counts'")
+      missing_on_read(paste0("some of mod/", modalityname, "/layers"), "custom layers, unless labeled 'counts'")
     }
   }
 
@@ -207,7 +207,7 @@ read_layers_to_assay <- function(root) {
       } else {
         # 2
         assay <- Seurat::CreateAssayObject(data = raw.X)
-        assay@scale.data <- X 
+        assay@scale.data <- X
       }
     } else {
       # 3
@@ -236,14 +236,14 @@ read_attr_m <- function(root, attr_name, dim_names = NULL) {
       rownames(mx) <- dim_names
       mx
     })
-    
+
     names(attrm) <- names(root[[attrm_name]])
   }
 
   attrm
 }
 
-#' @import Seurat
+#' @import Seurat methods
 read_attr_p <- function(root, attr_name, dim_names = NULL) {
   if (is.null(dim_names)) {
     attr_df <- read_with_index(root[[attr_name]])
@@ -263,13 +263,13 @@ read_attr_p <- function(root, attr_name, dim_names = NULL) {
       }
       Seurat::as.Graph(mx)
     })
-    
+
     names(attrp) <- names(root[[attrp_name]])
   }
 
   attrp
 }
 
-# For some common reductions, 
+# For some common reductions,
 # there are conventional names for the loadings slots
 OBSM2VARM <- list("X_pca" = "PCs", "X_mofa" = "LFs")

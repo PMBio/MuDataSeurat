@@ -1,11 +1,14 @@
+#' @rdname WriteH5MU
 setGeneric("WriteH5MU", function(object, file, overwrite = TRUE) standardGeneric("WriteH5MU"))
+
+#' @rdname WriteH5AD
 setGeneric("WriteH5AD", function(object, file, assay = NULL, overwrite = TRUE) standardGeneric("WriteH5AD"))
 
 #' A helper function to write a modality (an assay) to an .h5mu file
-#' 
+#'
 #' @keywords internal
-#' 
-#' @import hdf5r
+#'
+#' @import hdf5r methods
 #' @importFrom Matrix t
 WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
 
@@ -181,7 +184,7 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
 }
 
 #' Write one assay to .h5ad
-#' 
+#'
 #' This function writes the data of one of the assays (modalities) of a \code{Seurat} object into an .h5ad file.
 #' The behavior of this function if NAs are present is undefined.
 #'
@@ -191,6 +194,8 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
 #' @param file Path to the .h5ad file.
 #' @param assay Assay to write; can be omitted if there is a single assay in the object.
 #' @param overwrite Boolean value to indicate if to overwrite the \code{file} if it exists (\code{TRUE} by default).
+#'
+#' @rdname WriteH5AD
 #'
 #' @import hdf5r
 #'
@@ -210,24 +215,24 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
   if (length(object@assays) > 1 && is.null(assay)) {
     h5$close()
     stop(paste0(
-      "An assay to be written has to be provided, one of: ", 
+      "An assay to be written has to be provided, one of: ",
       paste(names(object@assays), collapse = ", "),
       ".\nUse WriteH5MU() to write all the modalities."
     ))
   } else {
     assay <- names(object@assays)[1]
   }
-  
+
   # "Global" attributes such as metadata have to be written
   WriteH5ADHelper(object, assay, h5, global = TRUE)
-  
+
   finalize_anndata(h5)
 
   TRUE
 })
 
 #' Create an .h5mu file with data from a \code{\link{Seurat}} object
-#' 
+#'
 #' Save \code{\link{Seurat}} object to .h5mu file.
 #' The behavior of this function if NAs are present is undefined.
 #'
@@ -237,7 +242,9 @@ setMethod("WriteH5AD", "Seurat", function(object, file, assay = NULL, overwrite 
 #' @param file Path to the .h5mu file.
 #' @param overwrite Boolean value to indicate if to overwrite the \code{file} if it exists (\code{TRUE} by default).
 #'
-#' @import hdf5r
+#' @rdname WriteH5MU
+#'
+#' @import hdf5r methods
 #'
 #' @exportMethod WriteH5MU
 setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
@@ -262,7 +269,7 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
   })
 
   # global .var will only contain rownames
-  # NOTE: creating a data.frame fails for objects 
+  # NOTE: creating a data.frame fails for objects
   # that have the same feature name(s) across different modalities
   # var <- data.frame(row.names = do.call(c, var_names))
   # write_data_frame(var_group, var)
@@ -272,7 +279,7 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
   uns_group <- h5$create_group("uns")
 
   # reductions -> .obsm
-  # Reductions starting with modality name 
+  # Reductions starting with modality name
   # that corresponds to the assay.used value
   # will be stored in .obsm slots of individual modalities:
   # RNAUMAP -> /mod/RNA/obsm/UMAP
@@ -287,14 +294,14 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
       if (!is.null(assay_emb) && assay_emb != "" && assay_emb %in% modalities) {
         # Only count reduction as modality-specific
         # if its name can be found in the reduction name or reduction key.
-        # This is required since Seurat does require having an existing modality 
+        # This is required since Seurat does require having an existing modality
         # in assay.used, which complicates loading multimodal embeddings.
         # The latter are currently loaded with the default assay set as assay.used.
         if (grepl(tolower(assay_emb), tolower(red_name)) || grepl(tolower(assay_emb), tolower(red@key))) {
           modality_specific <- TRUE
         }
 
-        # Strip away modality name if the embedding starts with it        
+        # Strip away modality name if the embedding starts with it
         if (assay_emb == substr(red_name, 1, length(assay_emb))) {
           red_name <- substr(red_name, length(assay_emb) + 1, length(red_name))
         }
@@ -316,7 +323,7 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
           obsm <- h5[["obsm"]]
         }
       }
-      
+
       obsm$create_dataset(paste0("X_", red_name), emb)
 
       # loadings -> .varm
@@ -378,7 +385,7 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
         if (!graph@assay.used %in% modalities)
           graph_no_assay <- TRUE
       }
-      
+
       if (graph_no_assay) {
         graph_group <- obsp_group$create_group(graph_name)
         write_sparse_matrix(graph_group, graph, "csc_matrix")

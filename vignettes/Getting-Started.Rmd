@@ -39,6 +39,12 @@ library(remotes)
 remotes::install_github("PMBio/MuDataSeurat")
 ```
 
+For the purpose of this tutorial, we will use [`SeuratData`](https://github.com/satijalab/seurat-data) to obtain data in the form of Seurat objects:
+
+```{r, eval = FALSE}
+devtools::install_github('satijalab/seurat-data')
+```
+
 # Loading libraries
 
 ```{r setup, message = FALSE}
@@ -51,7 +57,7 @@ library(hdf5r)
 
 # Writing H5MU files
 
-We'll use a Seurat object distributed via `SeuratDisk`:
+We'll use a Seurat object distributed via `SeuratData`:
 
 ```{r}
 suppressWarnings(InstallData("cbmc"))

@@ -73,9 +73,11 @@ ReadH5AD <- function(file) {
     }
 
     emb_stdev <- numeric()
-    if (emb_name %in% names(h5[["uns"]])) {
-      if ("variance" %in% names(h5[["uns"]][[emb_name]])) {
-        emb_stdev <- sqrt(h5[["uns"]][[emb_name]][["variance"]]$read())
+    if ("uns" %in% names(h5)) {
+      if (emb_name %in% names(h5[["uns"]])) {
+        if ("variance" %in% names(h5[["uns"]][[emb_name]])) {
+          emb_stdev <- sqrt(h5[["uns"]][[emb_name]][["variance"]]$read())
+        }
       }
     }
 
@@ -232,9 +234,11 @@ ReadH5MU <- function(file) {
     }
 
     emb_stdev <- numeric()
-    if (emb_name %in% names(h5[["uns"]])) {
-      if ("variance" %in% names(h5[["uns"]][[emb_name]])) {
-        emb_stdev <- sqrt(h5[["uns"]][[emb_name]][["variance"]]$read())
+    if ("uns" %in% names(h5)) {
+      if (emb_name %in% names(h5[["uns"]])) {
+        if ("variance" %in% names(h5[["uns"]][[emb_name]])) {
+          emb_stdev <- sqrt(h5[["uns"]][[emb_name]][["variance"]]$read())
+        }
       }
     }
 
@@ -263,9 +267,12 @@ ReadH5MU <- function(file) {
       }
 
       emb_stdev <- numeric()
-      if (emb_name %in% names(h5[["mod"]][[mod]][["uns"]])) {
-        if ("variance" %in% names(h5[["mod"]][[mod]][["uns"]][[emb_name]])) {
-          emb_stdev <- sqrt(h5[["mod"]][[mod]][["uns"]][[emb_name]][["variance"]]$read())
+      h5_mod <- h5[["mod"]][[mod]]
+      if ("uns" %in% names(h5_mod)) {
+        if (emb_name %in% names(h5_mod[["uns"]])) {
+          if ("variance" %in% names(h5_mod[["uns"]][[emb_name]])) {
+            emb_stdev <- sqrt(h5_mod[["uns"]][[emb_name]][["variance"]]$read())
+          }
         }
       }
 

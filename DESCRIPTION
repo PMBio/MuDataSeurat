@@ -1,5 +1,5 @@
 Package: MuDataSeurat
-Title: MuData serialization for Seurat
+Title: MuData Serialization for Seurat
 Version: 0.0.0.9000
 Authors@R:
     c(person(given = "Danila",
@@ -13,7 +13,7 @@ Authors@R:
            email = "i.kats@dkfz-heidelberg.de",
            comment = c(ORCID = "0000-0001-5220-5671")))
 Description: Save Seurat objects to h5mu files. The suggested SeuratData package
-    is availabe on GitHub at https://github.com/satijalab/seurat-data and can
+    is availabe on GitHub at <https://github.com/satijalab/seurat-data> and can
     be installed with devtools.
 Imports: hdf5r, Matrix, Seurat, methods, utils
 Suggests:

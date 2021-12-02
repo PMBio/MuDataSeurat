@@ -78,7 +78,7 @@
       German Cancer Research Center, Heidelberg, Germany<br><a class="author_email" href="mailto:#"></a><a href="mailto:i.kats@dkfz-heidelberg.de" class="email">i.kats@dkfz-heidelberg.de</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2021-12-01</h4>
+            <h4 data-toc-skip class="date">2021-12-02</h4>
       
       
       <div class="hidden name"><code>Getting-Started.Rmd</code></div>
@@ -100,11 +100,14 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org" class="external-link">remotes</a></span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"PMBio/MuDataSeurat"</span><span class="op">)</span></code></pre></div>
+<p>For the purpose of this tutorial, we will use <a href="https://github.com/satijalab/seurat-data" class="external-link"><code>SeuratData</code></a> to obtain data in the form of Seurat objects:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'satijalab/seurat-data'</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="loading-libraries">Loading libraries<a class="anchor" aria-label="anchor" href="#loading-libraries"></a>
 </h1>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">MuDataSeurat</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.satijalab.org/seurat" class="external-link">SeuratData</a></span><span class="op">)</span><span class="op">)</span>
@@ -114,8 +117,8 @@
 <div class="section level1">
 <h1 id="writing-h5mu-files">Writing H5MU files<a class="anchor" aria-label="anchor" href="#writing-h5mu-files"></a>
 </h1>
-<p>We’ll use a Seurat object distributed via <code>SeuratDisk</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>We’ll use a Seurat object distributed via <code>SeuratData</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="http://www.satijalab.org/seurat/reference/InstallData.html" class="external-link">InstallData</a></span><span class="op">(</span><span class="st">"cbmc"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"cbmc"</span><span class="op">)</span>
 <span class="va">cbmc</span>
@@ -124,7 +127,7 @@
 <span class="co">#&gt; Active assay: RNA (20501 features, 0 variable features)</span>
 <span class="co">#&gt;  1 other assay present: ADT</span></code></pre></div>
 <p>First, we make variable names unique across modalities:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Append -ADT to feature names in the ADT assay</span>
 <span class="va">adt_counts</span> <span class="op">&lt;-</span> <span class="va">cbmc</span><span class="op">[[</span><span class="st">"ADT"</span><span class="op">]</span><span class="op">]</span><span class="op">@</span><span class="va">counts</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">adt_counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">adt_counts</span><span class="op">)</span>, <span class="st">"ADT"</span>, sep <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span>
@@ -143,7 +146,7 @@
 <span class="co">#&gt; Active assay: ADT (10 features, 0 variable features)</span>
 <span class="co">#&gt;  1 other assay present: RNA</span></code></pre></div>
 <p>We can then use <code><a href="../reference/WriteH5MU.html">WriteH5MU()</a></code> to write the contents of the <code>cbmc</code> object to an <code>H5MU</code> file:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/WriteH5MU.html">WriteH5MU</a></span><span class="op">(</span><span class="va">cbmc_u</span>, <span class="st">"cbmc.h5mu"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 </div>
@@ -151,7 +154,7 @@
 <h1 id="reading-h5mu-files">Reading H5MU files<a class="anchor" aria-label="anchor" href="#reading-h5mu-files"></a>
 </h1>
 <p>We can manually check the top level of the structure of the file:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">h5</span> <span class="op">&lt;-</span> <span class="va"><a href="http://hhoeflin.github.io/hdf5r/reference/H5File-class.html" class="external-link">H5File</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="st">"cbmc.h5mu"</span>, mode <span class="op">=</span> <span class="st">"r"</span><span class="op">)</span>
 <span class="va">h5</span>
 <span class="co">#&gt; Class: H5File</span>
@@ -166,7 +169,7 @@
 <span class="co">#&gt;   uns H5I_GROUP         &lt;NA&gt;               &lt;NA&gt;</span>
 <span class="co">#&gt;   var H5I_GROUP         &lt;NA&gt;               &lt;NA&gt;</span></code></pre></div>
 <p>Or dig deeper into the file:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">h5</span><span class="op">[[</span><span class="st">"mod"</span><span class="op">]</span><span class="op">]</span>
 <span class="co">#&gt; Class: H5Group</span>
 <span class="co">#&gt; Filename: /home/runner/work/MuDataSeurat/MuDataSeurat/vignettes/cbmc.h5mu</span>
@@ -180,7 +183,7 @@
 <h2 id="creating-seurat-objects-from-h5mu-files">Creating Seurat objects from H5MU files<a class="anchor" aria-label="anchor" href="#creating-seurat-objects-from-h5mu-files"></a>
 </h2>
 <p>This package provides <code>ReadH5MU</code> to create an object with data from an H5MU file. Since H5MU structure has been designed to accommodate more structured information than Seurat, only some data will be read. For instance, Seurat has no support for loading multimodal embeddings or pairwise graphs.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cbmc_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5MU.html">ReadH5MU</a></span><span class="op">(</span><span class="st">"cbmc.h5mu"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in missing_on_read("/varp", "pairwise annotation of variables"): Missing</span>
 <span class="co">#&gt; on read: /varp. Seurat does not support pairwise annotation of variables.</span>
@@ -190,7 +193,7 @@
 <span class="co">#&gt; Active assay: ADT (10 features, 0 variable features)</span>
 <span class="co">#&gt;  1 other assay present: RNA</span></code></pre></div>
 <p>Importantly, we recover the information from the original Seurat object:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cbmc_u</span><span class="op">@</span><span class="va">meta.data</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt;                     orig.ident nCount_RNA nFeature_RNA nCount_ADT</span>
 <span class="co">#&gt; CTGTTTACACCGCTAG SeuratProject      18224          910       1540</span>
@@ -214,7 +217,7 @@
 </h1>
 <p>If a <code>Seurat</code> object contains a single modality (assay), it can be written to an H5AD file.</p>
 <p>For demonstration, we’ll use a Seurat object with scRNA-seq counts distributed via <code>SeuratDisk</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="http://www.satijalab.org/seurat/reference/InstallData.html" class="external-link">InstallData</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span>
 <span class="va">pbmc3k</span>
@@ -222,11 +225,11 @@
 <span class="co">#&gt; 13714 features across 2700 samples within 1 assay </span>
 <span class="co">#&gt; Active assay: RNA (13714 features, 0 variable features)</span></code></pre></div>
 <p>We can use <code><a href="../reference/WriteH5AD.html">WriteH5AD()</a></code> to write the contents of the <code>pbmc3k</code> object to an <code>H5AD</code> file since this dataset contains a single modality (assay):</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/WriteH5AD.html">WriteH5AD</a></span><span class="op">(</span><span class="va">pbmc3k</span>, <span class="st">"pbmc3k.h5ad"</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>This data can be retrieved from an H5AD file with <code>ReadH5AD</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pbmc3k_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5AD.html">ReadH5AD</a></span><span class="op">(</span><span class="st">"pbmc3k.h5ad"</span><span class="op">)</span>
 <span class="co">#&gt; Warning: Keys should be one or more alphanumeric characters followed by an</span>
 <span class="co">#&gt; underscore, setting key from rna to rna_</span>
@@ -247,7 +250,7 @@
 <div class="section level1">
 <h1 id="session-info">Session Info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h1>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; R version 4.1.2 (2021-11-01)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
@@ -279,7 +282,7 @@
 <span class="co">#&gt;  [13] fansi_0.5.0           codetools_0.2-18      splines_4.1.2        </span>
 <span class="co">#&gt;  [16] cachem_1.0.6          knitr_1.36            polyclip_1.10-0      </span>
 <span class="co">#&gt;  [19] jsonlite_1.7.2        ica_1.0-2             cluster_2.1.2        </span>
-<span class="co">#&gt;  [22] png_0.1-7             uwot_0.1.10           spatstat.sparse_2.0-0</span>
+<span class="co">#&gt;  [22] png_0.1-7             uwot_0.1.11           spatstat.sparse_2.0-0</span>
 <span class="co">#&gt;  [25] shiny_1.7.1           sctransform_0.3.2     BiocManager_1.30.16  </span>
 <span class="co">#&gt;  [28] compiler_4.1.2        httr_1.4.2            Matrix_1.3-4         </span>
 <span class="co">#&gt;  [31] fastmap_1.1.0         lazyeval_0.2.2        cli_3.1.0            </span>

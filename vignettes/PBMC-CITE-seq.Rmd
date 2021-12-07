@@ -24,11 +24,11 @@ comment = "#>"
 )
 ```
 
-# Introduction
+## Introduction
 
 CITE-seq data provide RNA and surface protein counts for the same cells. There are different workflows to analyse these data in R such as with [Seurat](https://satijalab.org/seurat/articles/weighted_nearest_neighbor_analysis.html) or with [CiteFuse](http://www.bioconductor.org/packages/release/bioc/vignettes/CiteFuse/inst/doc/CiteFuse.html). This tutorial shows how such data stored in MuData (H5MU) files can be read and integrated with Seurat-based workflows.
 
-# Installation
+## Installation
 
 The most recent `MuDataSeurat` build can be installed from GitHub:
 
@@ -37,14 +37,14 @@ library(remotes)
 remotes::install_github("PMBio/MuDataSeurat")
 ```
 
-# Loading libraries
+## Loading libraries
 
 ```{r setup, message = FALSE}
 library(MuDataSeurat)
 library(Seurat)
 ```
 
-# Loading data
+## Loading data
 
 For this tutorial, we will use a subset of cells and features from the output of the [CITE-seq integration in muon](https://muon-tutorials.readthedocs.io/en/latest/cite-seq/1-CITE-seq-PBMC-5k.html).
 
@@ -62,7 +62,7 @@ pbmc
 
 Here, `pbmc` is a full-featured Seurat object that can be used in downstream analysis workflows.
 
-# Visualising data
+## Visualising data
 
 Importantly, data can now be plotted with Seurat.
 
@@ -71,7 +71,7 @@ Idents(pbmc) <- "celltype"
 DimPlot(pbmc, reduction = "WNN_UMAP")
 ```
 
-## Markers
+### Markers
 
 Cells can be coloured by expression level and plotted in a selected latent space:
 
@@ -100,7 +100,7 @@ VlnPlot(pbmc[,pbmc@meta.data$celltype %in% t_cells],
         features = prot_features, ncol = 3)
 ```
 
-# Downstream analysis
+## Downstream analysis
 
 Since `pbmc` is a Seurat object, we can use corresponding processing and analysis functions. To provide an example, we will re-calculate cell neighbourhoods using the previously computed (on the full dataset) MOFA factors and then compute a non-linear embedding of cells.
 
@@ -112,7 +112,7 @@ pbmc <- RunUMAP(pbmc, reduction = "MOFA", dims = 1:30, reduction.key = "rUMAP_",
 DimPlot(pbmc, reduction = "rUMAP")
 ```
 
-# References
+## References
 
 - [Muon: multimodal omics analysis framework](https://www.biorxiv.org/content/10.1101/2021.06.01.445670) preprint
 
@@ -122,7 +122,7 @@ DimPlot(pbmc, reduction = "rUMAP")
 
 - muon [documentation](https://muon.readthedocs.io/) and [tutorials](https://muon-tutorials.readthedocs.io/)
 
-# Session Info
+## Session Info
 
 ```{r}
 sessionInfo()

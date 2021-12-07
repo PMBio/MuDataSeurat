@@ -24,13 +24,13 @@ comment = "#>"
 )
 ```
 
-# Introduction
+## Introduction
 
 Multimodal data format — [MuData](https://mudata.readthedocs.io/) — [has been introduced](https://www.biorxiv.org/content/10.1101/2021.06.01.445670v1) to address the need for cross-platform standard for sharing large-scale multimodal omics data. Importantly, it develops ideas of and is compatible with [AnnData](https://anndata.readthedocs.io/) standard for storing raw and derived data for unimodal datasets.
 
 In R, multimodal datasets can be stored in [Seurat](https://satijalab.org/seurat/) objects. This `MuDataSeurat` package demonstrates how data can be read from MuData files (H5MU) into Seurat objects as well as how information from Seurat objects can be saved into H5MU files.
 
-# Installation
+## Installation
 
 The most recent `MuDataSeurat` build can be installed from GitHub:
 
@@ -45,7 +45,7 @@ For the purpose of this tutorial, we will use [`SeuratData`](https://github.com/
 devtools::install_github('satijalab/seurat-data')
 ```
 
-# Loading libraries
+## Loading libraries
 
 ```{r setup, message = FALSE}
 library(MuDataSeurat)
@@ -55,7 +55,7 @@ suppressWarnings(library(SeuratData))
 library(hdf5r)
 ```
 
-# Writing H5MU files
+## Writing H5MU files
 
 We'll use a Seurat object distributed via `SeuratData`:
 
@@ -89,7 +89,7 @@ We can then use `WriteH5MU()` to write the contents of the `cbmc` object to an `
 WriteH5MU(cbmc_u, "cbmc.h5mu")
 ```
 
-# Reading H5MU files
+## Reading H5MU files
 
 We can manually check the top level of the structure of the file:
 
@@ -105,7 +105,7 @@ h5[["mod"]]
 h5$close()
 ```
 
-## Creating Seurat objects from H5MU files
+### Creating Seurat objects from H5MU files
 
 This package provides `ReadH5MU` to create an object with data from an H5MU file. Since H5MU structure has been designed to accommodate more structured information than Seurat, only some data will be read. For instance, Seurat has no support for loading multimodal embeddings or pairwise graphs.
 
@@ -121,7 +121,7 @@ head(cbmc_u@meta.data[,1:4])
 head(cbmc_r@meta.data[,1:4])
 ```
 
-# H5AD files
+## H5AD files
 
 If a `Seurat` object contains a single modality (assay), it can be written to an H5AD file.
 
@@ -146,7 +146,7 @@ pbmc3k_r <- ReadH5AD("pbmc3k.h5ad")
 pbmc3k_r
 ```
 
-# References
+## References
 
 - [Muon: multimodal omics analysis framework](https://www.biorxiv.org/content/10.1101/2021.06.01.445670) preprint
 
@@ -154,7 +154,7 @@ pbmc3k_r
 
 - muon [documentation](https://muon.readthedocs.io/) and [web page](https://gtca.github.io/muon/)
 
-# Session Info
+## Session Info
 
 ```{r}
 sessionInfo()

@@ -54,7 +54,7 @@ This example dataset can be downloaded as a file in the H5MU format, which is th
 # Download file into a temporary directory
 fdir <- tempdir()
 mdata_path <- file.path(fdir, "minipbcite.h5mu")
-download.file(url="https://github.com/gtca/h5xx-datasets/blob/main/datasets/minipbcite.h5mu?raw=true", destfile=mdata_path)
+download.file(url="https://github.com/gtca/h5xx-datasets/blob/main/datasets/minipbcite.h5mu?raw=true", destfile=mdata_path, mode="wb")
 
 pbmc <- ReadH5MU(mdata_path)
 pbmc

@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 collapse = TRUE,
 comment = "#>"
 )
+options(timeout=180)
 ```
 
 ## Introduction
@@ -60,7 +61,7 @@ library(hdf5r)
 We'll use a Seurat object distributed via `SeuratData`:
 
 ```{r}
-InstallData("cbmc")
+suppressWarnings(InstallData("cbmc"))
 data("cbmc")
 cbmc
 ```

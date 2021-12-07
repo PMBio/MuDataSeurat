@@ -102,11 +102,13 @@ VlnPlot(pbmc[,pbmc@meta.data$celltype %in% t_cells],
 
 # Downstream analysis
 
-Since `pbmc` is a Seurat object, we can use corresponding processing and analysis functions. To provide in example, we will re-calculate cell neighbourhoods using the previously computed (on the full dataset) MOFA factors and then compute a non-linear embedding of cells.
+Since `pbmc` is a Seurat object, we can use corresponding processing and analysis functions. To provide an example, we will re-calculate cell neighbourhoods using the previously computed (on the full dataset) MOFA factors and then compute a non-linear embedding of cells.
 
 ```{r}
-pbmc <- FindNeighbors(pbmc, reduction="MOFA", dims=1:30)
-pbmc <- RunUMAP(pbmc, reduction="MOFA", dims=1:30, reduction.key="rUMAP_", reduction.name="rUMAP")
+pbmc <- FindNeighbors(pbmc, reduction = "MOFA", dims = 1:30)
+
+pbmc <- RunUMAP(pbmc, reduction = "MOFA", dims = 1:30, reduction.key = "rUMAP_", reduction.name = "rUMAP")
+
 DimPlot(pbmc, reduction = "rUMAP")
 ```
 

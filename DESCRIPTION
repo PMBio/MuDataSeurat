@@ -19,6 +19,7 @@ Imports: hdf5r, Matrix, Seurat, methods, utils
 Suggests:
     rmarkdown,
     knitr,
+    SeuratData,
     BiocStyle
 VignetteBuilder: knitr
 License: GPL-3

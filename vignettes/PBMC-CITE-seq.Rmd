@@ -12,7 +12,7 @@ output:
   BiocStyle::html_document:
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Getting started with MuDataMae}
+  %\VignetteIndexEntry{CITE-seq data with MuData and Seurat}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -60,7 +60,7 @@ library(hdf5r)
 We'll use a Seurat object distributed via `SeuratData`:
 
 ```{r}
-suppressWarnings(InstallData("cbmc"))
+InstallData("cbmc")
 data("cbmc")
 cbmc
 ```

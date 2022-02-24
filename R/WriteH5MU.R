@@ -83,7 +83,7 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
               write_sparse_matrix(data_group, x_data, sparse_type)
             } else {
               # dense matrix
-              raw_group$create_dataset("X", x_data)
+              raw_group$create_dataset("X", t(x_data))
             }
             # .raw has to contain .var as well
             raw_var_group <- raw_group$create_group("var")

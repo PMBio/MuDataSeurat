@@ -55,12 +55,17 @@ write_data_frame <- function(attr_group, attr_df) {
   categories <- list()
   for (col in colnames(attr_df)) {
     v <- attr_df[[col]]
-    if ("factor" %in% class(v)) {
+    if (is.factor(v)) {
       # Write a factor
       categories[[col]] <- levels(v)
       attr_group$create_dataset(col, as.integer(v) - 1, dtype = h5types$H5T_NATIVE_INT)
     } else {
-      attr_group$create_dataset(col, v)
+      dtype <- NULL
+      if (is.character(v)) {
+          dtype <- H5T_STRING$new(type="c", size=Inf)
+          dtype$set_cset("UTF-8")
+      }
+      attr_group$create_dataset(col, v, dtype=dtype)
     }
   }
   if (length(categories) > 0) {
@@ -68,8 +73,8 @@ write_data_frame <- function(attr_group, attr_df) {
     for (cat in names(categories)) {
       cat_dataset <- cats$create_dataset(cat, categories[[cat]])
       cat_dataset$create_attr("ordered", FALSE, space = H5S$new("scalar"))
-      attr_group[[cat]]$create_attr("categories", 
-                                    cats$create_reference(cat), 
+      attr_group[[cat]]$create_attr("categories",
+                                    cats$create_reference(cat),
                                     space = H5S$new("scalar"))
     }
   }
@@ -84,12 +89,14 @@ write_data_frame <- function(attr_group, attr_df) {
     # When there are no columns, null buffer can't be written to a file.
     attr_group$create_attr("column-order", dtype=h5types$H5T_NATIVE_DOUBLE, space=H5S$new("simple", 0, 0))
   }
-  
+
 }
 
 # Only write _index (obs_names or var_names)
 write_names <- function(attr_group, attr_names) {
-  attr_group$create_dataset("_index", attr_names)
+  dtype <- H5T_STRING$new(type="c", size=Inf)
+  dtype$set_cset("UTF-8")
+  attr_group$create_dataset("_index", attr_names, dtype=dtype)
 
   # Write attributes
   attr_group$create_attr("_index", "_index", space = H5S$new("scalar"))
@@ -97,7 +104,7 @@ write_names <- function(attr_group, attr_names) {
   attr_group$create_attr("encoding-version", "0.1.0", space = H5S$new("scalar"))
   # When there are no columns, null buffer can't be written to a file.
   attr_group$create_attr("column-order", dtype=h5types$H5T_NATIVE_DOUBLE, space=H5S$new("simple", 0, 0))
-  
+
 }
 
 write_sparse_matrix <- function(root, x, sparse_type) {

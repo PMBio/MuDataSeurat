@@ -21,7 +21,7 @@ Suggests:
     knitr,
     SeuratData,
     BiocStyle
-Remotes: SeuratData=github::satijalab/seurat-data
+Remotes: github::SeuratData=satijalab/seurat-data
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8

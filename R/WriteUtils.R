@@ -72,8 +72,10 @@ write_data_frame <- function(attr_group, attr_df) {
   }
   if (length(categories) > 0) {
     cats <- attr_group$create_group("__categories")
+    dtype <- H5T_STRING$new(type="c", size=Inf)
+    dtype$set_cset("UTF-8")
     for (cat in names(categories)) {
-      cat_dataset <- cats$create_dataset(cat, categories[[cat]])
+      cat_dataset <- cats$create_dataset(cat, categories[[cat]], dtype=dtype)
       cat_dataset$create_attr("ordered", FALSE, space = H5S$new("scalar"))
       attr_group[[cat]]$create_attr("categories",
                                     cats$create_reference(cat),

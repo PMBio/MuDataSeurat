@@ -58,7 +58,9 @@ write_data_frame <- function(attr_group, attr_df) {
     if (is.factor(v)) {
       # Write a factor
       categories[[col]] <- levels(v)
-      attr_group$create_dataset(col, as.integer(v) - 1, dtype = h5types$H5T_NATIVE_INT)
+      codes <- as.integer(v) - 1
+      codes[is.na(codes)] <- -1
+      attr_group$create_dataset(col, codes, dtype = h5types$H5T_NATIVE_INT)
     } else {
       dtype <- NULL
       if (is.character(v)) {

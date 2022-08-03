@@ -151,6 +151,14 @@ read_layers_to_assay <- function(root, modalityname="") {
   X <- read_matrix(root[['X']])
 
   var <- read_with_index(root[['var']])
+  if (any(grepl("_", rownames(var)))) {
+    example_which <- grep("_", rownames(var))[1]
+    example_before <- rownames(var)[example_which]
+    rownames(var) <- gsub("_", "-", rownames(var))
+    example_after <- rownames(var)[example_which]
+    warning(paste0("The var_names from modality ", modalityname, " have been renamed as feature names cannot contain '_'.",
+      " E.g. ", example_before, " -> ", example_after, "."))
+  }
 
   obs <- read_with_index(root[['obs']])
   if (is("obs", "data.frame"))

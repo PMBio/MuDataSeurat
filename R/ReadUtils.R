@@ -36,7 +36,7 @@ missing_on_read <- function(loc, desc = "") {
 }
 
 
-read_with_index <- function(dataset) {
+read_with_index <- function(dataset, set_index = TRUE) {
   if ("H5Group" %in% class(dataset)) {
     # Table is saved as a group rather than a dataset
     dataset_attr <- tryCatch({
@@ -75,7 +75,7 @@ read_with_index <- function(dataset) {
     table <- data.frame(Reduce(cbind.data.frame, col_list))
     colnames(table) <- columns
 
-    if (indexcol %in% colnames(table)) {
+    if ((indexcol %in% colnames(table)) && set_index) {
       rownames(table) <- table[,indexcol,drop=TRUE]
       table <- table[,!colnames(table) %in% c(indexcol),drop=FALSE]
     }
@@ -96,7 +96,7 @@ read_with_index <- function(dataset) {
       indexcol <- dataset_attr$`_index`
     }
 
-    if (indexcol %in% colnames(table)) {
+    if ((indexcol %in% colnames(table)) && set_index) {
       rownames(table) <- table[,indexcol,drop=TRUE]
       table <- table[,!colnames(table) %in% c(indexcol),drop=FALSE]
     }

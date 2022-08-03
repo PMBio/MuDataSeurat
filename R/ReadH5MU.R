@@ -120,10 +120,17 @@ ReadH5MU <- function(file) {
   metadata <- read_with_index(h5[["obs"]])
 
   # NOTE: there's no global feature metadata in the Seurat object
-  # NOTE: these names are currently required to be unique
-  ft_metadata <- read_with_index(h5[["var"]])
+  ft_metadata <- tryCatch({
+      read_with_index(h5[["var"]])
+    },
+    error = function(err) {
+      warning(err)
+      read_with_index(h5[["var"]], set_index = FALSE)
+    }
+  )
+
   if (ncol(ft_metadata) > 0)
-    missing_on_read("/var", "global variables metadata")
+    missing_on_read("/var", paste0("global variables metadata (", paste(colnames(ft_metadata), collapse = ", "), ")"))
 
   # Get (multimodal) embeddings
   embeddings <- read_attr_m(h5, 'obs', rownames(metadata))
@@ -131,6 +138,7 @@ ReadH5MU <- function(file) {
   embeddings <- embeddings[!names(embeddings) %in% assays]
 
   # Get (multimodal) loadings
+  # NOTE: features can be set as row names only if they are unique
   loadings <- read_attr_m(h5, 'var', rownames(ft_metadata))
 
   # Get obs pairs

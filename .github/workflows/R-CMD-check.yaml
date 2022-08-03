@@ -36,6 +36,11 @@ jobs:
       - name: Install system dependencies
         if: runner.os == 'macOS'
         run: brew install hdf5
+        
+      - name: Install SeuratData
+        if: always()
+        run: Rscript -e "install.packages('remotes'); remotes:::install_github('satijalab/seurat-data')"
+        shell: bash
       
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:

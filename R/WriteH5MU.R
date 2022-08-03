@@ -72,8 +72,8 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
           if ('scale.data' %in% slotNames(mod_object) && length(mod_object@scale.data) > 0) {
             # case 2: counts, data, and scale.data are available
             # .X
-            x_scaled <- t(Seurat::GetAssayData(mod_object, 'scale.data'))
-            root$create_dataset("X", t(x_scaled))
+            x_scaled <- Seurat::GetAssayData(mod_object, 'scale.data')
+            root$create_dataset("X", x_scaled)
             # .raw
             raw_group <- root$create_group("raw")
             if ("i" %in% slotNames(x_data)) {
@@ -97,7 +97,7 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
               write_sparse_matrix(data_group, x_data, sparse_type)
             } else {
               # dense matrix
-              root$create_dataset("X", t(x_data))
+              root$create_dataset("X", x_data)
             }
           }
         }
@@ -141,7 +141,20 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
           varm_key = OBSM2VARM[[paste0("X_", red_name)]]
         }
 
-        varm_group$create_dataset(varm_key, t(loadings))
+        # If only a subset of features was used,
+        # this has to be accounted for
+        if (nrow(loadings) < nrow(var)) {
+          all_loadings <- matrix(
+            ncol = ncol(loadings),
+            nrow = nrow(var)
+          )
+          rownames(all_loadings) <- rownames(var)
+          all_loadings[rownames(loadings),] <- loadings
+        } else {
+          all_loadings <- loadings
+        }
+
+        varm_group$create_dataset(varm_key, t(all_loadings))
       }
 
       # stdev -> .uns[...]['variance']
@@ -267,6 +280,7 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
     mod_object <- object[[mod]]
     rownames(mod_object)
   })
+  names(var_names) <- modalities
 
   # global .var will only contain rownames
   # NOTE: creating a data.frame fails for objects
@@ -347,7 +361,27 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
             varm <- h5[["varm"]]
           }
         }
-        varm$create_dataset(varm_key, t(loadings))
+        
+        # If only a subset of features was used,
+        # this has to be accounted for
+        if (modality_specific) {
+          var_names_for_loadings <- var_names[[assay_emb]]
+        } else {
+          var_names_for_loadings <- do.call(c, var_names)
+        }
+
+        if (nrow(loadings) < length(var_names_for_loadings)) {
+          all_loadings <- matrix(
+            ncol = ncol(loadings),
+            nrow = length(var_names_for_loadings)
+          )
+          rownames(all_loadings) <- var_names_for_loadings
+          all_loadings[rownames(loadings),] <- loadings
+        } else {
+          all_loadings <- loadings
+        }
+
+        varm$create_dataset(varm_key, t(all_loadings))
       }
 
       # stdev -> .uns[...]['variance']

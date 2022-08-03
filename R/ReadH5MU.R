@@ -117,7 +117,7 @@ ReadH5MU <- function(file) {
 
   # Get assays (modalities)
   assays <- h5[["mod"]]$names
-  if ("mod-order" %in% h5attributes(h5[["mod"]])) {
+  if ("mod-order" %in% names(h5attributes(h5[["mod"]]))) {
     modorder <- h5attributes(h5[["mod"]])$`mod-order`
     if (all(assays %in% modorder)) {
       modorder <- modorder[modorder %in% assays]

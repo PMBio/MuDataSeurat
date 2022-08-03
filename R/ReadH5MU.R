@@ -116,7 +116,16 @@ ReadH5MU <- function(file) {
   h5 <- open_and_check_mudata(file)
 
   # Get assays (modalities)
-  assays <- h5[['mod']]$names
+  assays <- h5[["mod"]]$names
+  if ("mod-order" %in% h5attributes(h5[["mod"]])) {
+    modorder <- h5attributes(h5[["mod"]])$`mod-order`
+    if (all(assays %in% modorder)) {
+      modorder <- modorder[modorder %in% assays]
+      if (!any(duplicated(modorder))) {
+        assays <- modorder
+      }
+    }
+  }
 
   # Get global metadata
   metadata <- read_table(h5[["obs"]])

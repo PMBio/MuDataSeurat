@@ -233,13 +233,15 @@ ReadH5MU <- function(file) {
 
   # Add joint embeddings
   for (emb in names(embeddings)) {
-    emb_name <- toupper(gsub('X_', '', emb))
+    emb_name <- gsub('X_', '', emb)
 
     maybe_loadings <- matrix()
+    varm_key <- emb_name
     if (emb %in% names(OBSM2VARM)) {
-      varm_key = OBSM2VARM[[emb]]
-      if (hasName(loadings, varm_key))
-        maybe_loadings <- loadings[[varm_key]]
+      varm_key <- OBSM2VARM[[emb]]
+    }
+    if (hasName(loadings, varm_key)) {
+      maybe_loadings <- loadings[[varm_key]]
     }
 
     emb_stdev <- numeric()
@@ -260,20 +262,31 @@ ReadH5MU <- function(file) {
     )
   }
 
+  # Do embeddings across modalities have unique names?
+  # If each modality has e.g. X_pca, we will need to harmonise the names
+  # by prepending modality name: e.g. RNAPCA.
+  unique_emb <- FALSE
+  all_embeddings <- c(names(embeddings), unlist(lapply(mod_obsm, function(obsm) names(obsm))))
+  if (!any(duplicated(all_embeddings))) {
+    unique_emb <- TRUE
+  }
+
   # Add modality-specific embeddings
   for (mod in names(mod_obsm)) {
     mod_embeddings <- mod_obsm[[mod]]
     for (emb in names(mod_embeddings)) {
       emb_name <- gsub('X_', '', emb)
-      modemb_name <- paste(mod, gsub('X_', '', emb), sep = "")
+      modemb_name <- emb_name
+      if (!unique_emb)
+        modemb_name <- paste(mod, emb_name, sep = "")
       # Embeddings keys will have to follow the format alphanumericcharacters_, e.g. RNAPCA_.
 
       maybe_loadings <- matrix()
-      if (emb %in% names(OBSM2VARM)) {
+      varm_key <- emb_name
+      if (emb %in% names(OBSM2VARM))
         varm_key = OBSM2VARM[[emb]]
-        if (hasName(mod_varm[[mod]], varm_key))
-            maybe_loadings <- mod_varm[[mod]][[varm_key]]
-      }
+      if (hasName(mod_varm[[mod]], varm_key))
+        maybe_loadings <- mod_varm[[mod]][[varm_key]]
 
       emb_stdev <- numeric()
       h5_mod <- h5[["mod"]][[mod]]

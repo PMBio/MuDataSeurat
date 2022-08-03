@@ -321,6 +321,18 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
         }
       }
 
+      # Modality-specific reductions in Seurat objects 
+      # do not necessarily start with modality name.
+      # They also can be identified with all the feature names
+      # coming from the @assay.used.
+      if (!modality_specific) {
+        if (!is.null(loadings) && ncol(loadings) == ncol(red)) {
+          if (all(rownames(loadings) %in% var_names[[assay_emb]])) {
+            modality_specific <- TRUE
+          }
+        }
+      }
+
       if (modality_specific) {
         # REMOVE: this should have been written with WriteH5ADHelper
         # Modality-specific obsm
@@ -371,6 +383,8 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
         }
 
         if (nrow(loadings) < length(var_names_for_loadings)) {
+          warning(paste0("Loadings for ", varm_key, " are computed only for a some features.",
+            " For it, an array with full var dimension will be recorded as it has to be match the var dimension of the data."))
           all_loadings <- matrix(
             ncol = ncol(loadings),
             nrow = length(var_names_for_loadings)

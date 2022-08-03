@@ -187,8 +187,9 @@ ReadH5MU <- function(file) {
       }
     }
   }
+
   var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
-  if (!is.null(var_pairs_names) && length(var_pairs_names) > 0)
+  if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
 
   # Only common observations can be read
@@ -199,7 +200,7 @@ ReadH5MU <- function(file) {
   }
 
   # Create a Seurat object
-  srt <- Seurat::CreateSeuratObject(modalities[[1]][,obs_names], assay = names(modalities)[1])
+  srt <- Seurat::CreateSeuratObject(subset(modalities[[1]], cells = obs_names), assay = names(modalities)[1])
   for (modality in names(modalities)[2:length(modalities)]) {
     srt[[modality]] <- subset(modalities[[modality]], cells = obs_names)
   }

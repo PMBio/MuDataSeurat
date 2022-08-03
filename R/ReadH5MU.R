@@ -10,8 +10,8 @@ ReadH5AD <- function(file) {
   h5 <- open_anndata(file)
 
   # Get metadata
-  obs <- read_with_index(h5[["obs"]])
-  var <- read_with_index(h5[["var"]])
+  obs <- read_table(h5[["obs"]])
+  var <- read_table(h5[["var"]])
 
   # X
   assay <- read_layers_to_assay(h5)
@@ -28,7 +28,9 @@ ReadH5AD <- function(file) {
   # If there are var pairs, there's no place to store it
   # in the Seurat object
   # var_pairs <- read_attr_p(h5, 'var')
-  var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
+  var_pairs_names <- c()
+  if ("varp" %in% names(h5))
+    var_pairs_names <- names(h5[["varp"]])
   if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
 
@@ -117,15 +119,15 @@ ReadH5MU <- function(file) {
   assays <- h5[['mod']]$names
 
   # Get global metadata
-  metadata <- read_with_index(h5[["obs"]])
+  metadata <- read_table(h5[["obs"]])
 
   # NOTE: there's no global feature metadata in the Seurat object
   ft_metadata <- tryCatch({
-      read_with_index(h5[["var"]])
+      read_table(h5[["var"]])
     },
     error = function(err) {
       warning(err)
-      read_with_index(h5[["var"]], set_index = FALSE)
+      read_table(h5[["var"]], set_index = FALSE)
     }
   )
 
@@ -146,7 +148,9 @@ ReadH5MU <- function(file) {
 
   # If there are var pairs, there's no place to store it
   # in the Seurat object
-  var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
+  var_pairs_names <- c()
+  if ("varp" %in% names(h5))
+    var_pairs_names <- names(h5[["varp"]])
   if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
 
@@ -158,13 +162,13 @@ ReadH5MU <- function(file) {
 
   # mod/.../obs
   mod_obs <- lapply(assays, function(mod) {
-    read_with_index(h5[['mod']][[mod]][['obs']])
+    read_table(h5[['mod']][[mod]][['obs']])
   })
   names(mod_obs) <- assays
 
   # mod/.../var
   mod_var <- lapply(assays, function(mod) {
-    read_with_index(h5[['mod']][[mod]][['var']])
+    read_table(h5[['mod']][[mod]][['var']])
   })
   names(mod_var) <- assays
 
@@ -196,7 +200,9 @@ ReadH5MU <- function(file) {
     }
   }
 
-  var_pairs_names <- "varp" %in% names(h5) && names(h5[["varp"]])
+  var_pairs_names <- c()
+  if ("varp" %in% names(h5))
+    var_pairs_names <- names(h5[["varp"]])
   if (!is.null(var_pairs_names) && !isFALSE(var_pairs_names) && length(var_pairs_names) > 0)
     missing_on_read("/varp", "pairwise annotation of variables")
 

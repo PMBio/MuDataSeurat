@@ -35,8 +35,80 @@ missing_on_read <- function(loc, desc = "") {
   warning(paste0("Missing on read: ", loc, ". ", details))
 }
 
+read_table_encv1 <- function(dataset, set_index = TRUE) {
+  columns <- names(dataset)
+  columns <- columns[columns != "__categories"]
 
-read_with_index <- function(dataset, set_index = TRUE) {
+  col_list <- lapply(columns, function(name) {
+    values <- dataset[[name]]$read()
+    values_attr <- tryCatch({
+      h5attributes(dataset[[name]])
+    }, error = function(e) {
+      list()
+    })
+    if (length(values_attr) > 0) {
+      if ("categories" %in% names(values_attr)) {
+        # Make factors out of categorical data
+        ref <- values_attr$categories
+        values_labels <- ref$dereference(obj = NULL)[[1]]
+        # NOTE: number of labels have to be strictly matching the number of unique integer values.
+        values_notna <- unique(values)
+        values_notna <- values_notna[!is.na(values_notna)]
+        values <- factor(as.integer(values), labels = values_labels$read()[1:length(values_notna)])
+      }
+    }
+    values
+  })
+  table <- data.frame(Reduce(cbind.data.frame, col_list))
+  colnames(table) <- columns
+  table
+}
+
+read_column <- function(column, etype, eversion) {
+  values <- NULL
+  if (etype == "categorical") {
+    if (eversion == "0.2.0") {
+      codes <- column[["codes"]]$read()
+      categories <- column[["categories"]]$read()
+
+      # NOTE: number of labels have to be strictly matching the number of unique integer values.
+      codes_notna <- unique(codes)
+      codes_notna <- codes_notna[!is.na(codes_notna)]
+
+      values <- factor(as.integer(codes), labels = categories[1:length(codes_notna)])
+    } else {
+      warning(paste0("Cannot recognise encoving-version ", eversion))
+    }
+  } else {
+    values <- column$read()
+  }
+  # } else {
+  #   stop(paste0("Cannot recognise encoving-type ", etype))
+  # }
+  values
+}
+
+read_table_encv2 <- function(dataset, set_index = TRUE) {
+  columns <- names(dataset)
+
+  col_list <- lapply(columns, function(name) {
+    
+    col_attr <- tryCatch({
+      h5attributes(dataset[[name]])
+    }, error = function(e) {
+      list("encoding-type" = NULL)
+    })
+    
+    values <- read_column(dataset[[name]], col_attr$`encoding-type`, col_attr$`encoding-version`)
+
+    values
+  })
+  table <- data.frame(Reduce(cbind.data.frame, col_list))
+  colnames(table) <- columns
+  table
+}
+
+read_table <- function(dataset, set_index = TRUE) {
   if ("H5Group" %in% class(dataset)) {
     # Table is saved as a group rather than a dataset
     dataset_attr <- tryCatch({
@@ -49,31 +121,20 @@ read_with_index <- function(dataset, set_index = TRUE) {
       indexcol <- dataset_attr$`_index`
     }
 
-    columns <- names(dataset)
-    columns <- columns[columns != "__categories"]
+    encv <- "0.1.0"  # some encoding version by default
+    if ("encoding-version" %in% names(dataset_attr)) {
+      encv <- dataset_attr$`encoding-version`
+    }
 
-    col_list <- lapply(columns, function(name) {
-      values <- dataset[[name]]$read()
-      values_attr <- tryCatch({
-        h5attributes(dataset[[name]])
-      }, error = function(e) {
-        list()
-      })
-      if (length(values_attr) > 0) {
-        if ("categories" %in% names(values_attr)) {
-          # Make factors out of categorical data
-          ref <- values_attr$categories
-          values_labels <- ref$dereference(obj = NULL)[[1]]
-          # NOTE: number of labels have to be strictly matching the number of unique integer values.
-          values_notna <- unique(values)
-          values_notna <- values_notna[!is.na(values_notna)]
-          values <- factor(as.integer(values), labels = values_labels$read()[1:length(values_notna)])
-        }
-      }
-      values
-    })
-    table <- data.frame(Reduce(cbind.data.frame, col_list))
-    colnames(table) <- columns
+    if (encv == "0.1.0") {
+      table <- read_table_encv1(dataset, set_index)
+    } else if (encv == "0.2.0") {
+      table <- read_table_encv2(dataset, set_index)
+    } else {
+      stop(paste0("Encoding version ", encv, " is not recognised."))
+    }
+
+    columns <- colnames(table)
 
     if ((indexcol %in% colnames(table)) && set_index) {
       rownames(table) <- table[,indexcol,drop=TRUE]
@@ -150,7 +211,7 @@ read_matrix <- function(dataset) {
 read_layers_to_assay <- function(root, modalityname="") {
   X <- read_matrix(root[['X']])
 
-  var <- read_with_index(root[['var']])
+  var <- read_table(root[['var']])
   if (any(grepl("_", rownames(var)))) {
     example_which <- grep("_", rownames(var))[1]
     example_before <- rownames(var)[example_which]
@@ -160,7 +221,7 @@ read_layers_to_assay <- function(root, modalityname="") {
       " E.g. ", example_before, " -> ", example_after, "."))
   }
 
-  obs <- read_with_index(root[['obs']])
+  obs <- read_table(root[['obs']])
   if (is("obs", "data.frame"))
     rownames(obs) <- paste(modalityname, rownames(obs), sep="-")
 
@@ -171,7 +232,7 @@ read_layers_to_assay <- function(root, modalityname="") {
   if ("raw" %in% names(root)) {
     raw <- root[['raw']]
     raw.X <- read_matrix(raw[['X']])
-    raw.var <- read_with_index(raw[['var']])
+    raw.var <- read_table(raw[['var']])
     rownames(raw.X) <- rownames(raw.var)
     colnames(raw.X) <- colnames(X)
     if (nrow(raw.X) != nrow(X)) {
@@ -229,7 +290,7 @@ read_layers_to_assay <- function(root, modalityname="") {
 
 read_attr_m <- function(root, attr_name, dim_names = NULL) {
   if (is.null(dim_names)) {
-    attr_df <- read_with_index(root[[attr_name]])
+    attr_df <- read_table(root[[attr_name]])
     dim_names <- rownames(attr_df)
   }
   attrm_name <- paste0(attr_name, "m")
@@ -254,7 +315,7 @@ read_attr_m <- function(root, attr_name, dim_names = NULL) {
 #' @import Seurat methods
 read_attr_p <- function(root, attr_name, dim_names = NULL) {
   if (is.null(dim_names)) {
-    attr_df <- read_with_index(root[[attr_name]])
+    attr_df <- read_table(root[[attr_name]])
     dim_names <- rownames(attr_df)
   }
   attrp_name <- paste0(attr_name, "p")

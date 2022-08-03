@@ -233,7 +233,7 @@ ReadH5MU <- function(file) {
 
   # Add joint embeddings
   for (emb in names(embeddings)) {
-    emb_name <- gsub('X_', '', emb)
+    emb_name <- toupper(gsub('X_', '', emb))
 
     maybe_loadings <- matrix()
     varm_key <- emb_name

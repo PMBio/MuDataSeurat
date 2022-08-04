@@ -27,6 +27,7 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
 
   # .var
   var <- mod_object@meta.features
+  var_names <- rownames(mod_object@meta.features)
 
   # Define highly variable features, if any
   if ('var.features' %in% slotNames(mod_object)) {
@@ -40,70 +41,64 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
   write_data_frame(var_group, var)
 
   # .X, .layers['counts']. .raw.X
-  if ('counts' %in% slotNames(mod_object)) {
-    x_counts <- Seurat::GetAssayData(mod_object, 'counts')
-    if (nrow(x_counts) != 0 && ncol(x_counts) != 0) {
-      sparse_type <- ifelse(class(x_counts) == "dgCMatrix", "csc_matrix", "csr_matrix")
-      # case 1: only counts available
-      if (!(('data' %in% slotNames(mod_object)) || ('scale.data' %in% slotNames(mod_object)))) {
-        if ("i" %in% slotNames(x_counts)) {
-          # sparse matrix
-          x_counts <- Matrix::t(x_counts)
-          counts_group <- root$create_group("X")
-          write_sparse_matrix(counts_group, x_counts, sparse_type)
-        } else {
-          # dense matrix
-          root$create_dataset("X", t(x_counts))
-        }
-      } else {
-        layers_group <- root$create_group("layers")
-        if ("i" %in% slotNames(x_counts)) {
-          # sparse matrix
-          x_counts <- Matrix::t(x_counts)
-          counts_group <- layers_group$create_group("counts")
-          write_sparse_matrix(counts_group, x_counts, sparse_type)
-        } else {
-          # dense matrix
-          layers_group$create_dataset("counts", t(x_counts))
-        }
-        if ('data' %in% slotNames(mod_object)) {
-          x_data <- Seurat::GetAssayData(mod_object, 'data')
-          sparse_type <- ifelse(class(x_data) == "dgCMatrix", "csc_matrix", "csr_matrix")
-          if ('scale.data' %in% slotNames(mod_object) && length(mod_object@scale.data) > 0) {
-            # case 2: counts, data, and scale.data are available
-            # .X
-            x_scaled <- Seurat::GetAssayData(mod_object, 'scale.data')
-            root$create_dataset("X", x_scaled)
-            # .raw
-            raw_group <- root$create_group("raw")
-            if ("i" %in% slotNames(x_data)) {
-              # sparse matrix
-              x_data <- Matrix::t(x_data)
-              data_group <- raw_group$create_group("X")
-              write_sparse_matrix(data_group, x_data, sparse_type)
-            } else {
-              # dense matrix
-              raw_group$create_dataset("X", t(x_data))
-            }
-            # .raw has to contain .var as well
-            raw_var_group <- raw_group$create_group("var")
-            write_data_frame(raw_var_group, var)
-          } else {
-            # case 3: counts and data are available but not scale.data
-            if ("i" %in% slotNames(x_data)) {
-              # sparse matrix
-              x_data <- Matrix::t(x_data)
-              data_group <- root$create_group("X")
-              write_sparse_matrix(data_group, x_data, sparse_type)
-            } else {
-              # dense matrix
-              root$create_dataset("X", x_data)
-            }
-          }
-        }
-        # 'data' should to be available when 'scale.data' is available
-      }
+  # Assumptions:
+  #   1. counts/data/scale.data -> X
+  #   3. counts & data -> layers['counts'], X
+  #   2. data & scale.data -> layers['data'], X
+  #   4. counts & scale.data -> layers['counts'], X
+  #   5. counts & data & scale.data -> layers['counts'], layers['data'], X
+
+  x_names <- list("counts", "data", "scale.data")
+
+  x <- lapply(x_names, function(x_name) {
+    x <- NULL
+    if (x_name %in% slotNames(mod_object)) {
+      x <- Seurat::GetAssayData(mod_object, x_name)
+      if (nrow(x) == 0 || ncol(x) == 0)
+        x <- NULL
     }
+    x
+  })
+  names(x) <- x_names
+
+  slot_writer <- function(h5group, mx, name) {
+    sparse_type <- ifelse(class(mx) == "dgCMatrix", "csc_matrix", "csr_matrix")
+    if ("i" %in% slotNames(mx)) {
+      # sparse matrix
+      if (sparse_type == "csc_matrix")
+        xt <- Matrix::t(mx)
+      mx_group <- h5group$create_group(name)
+      write_sparse_matrix(mx_group, xt, sparse_type)
+    } else {
+      # dense matrix
+      h5group$create_dataset(name, mx)
+    }
+  }
+
+  if (!any(vapply(x, is.null, TRUE))) {
+    # 5
+    layers_group <- root$create_group("layers")
+    slot_writer(layers_group, x[["counts"]], "counts")
+    slot_writer(layers_group, x[["data"]], "data")
+    slot_writer(root, x[["scale.data"]], "X")
+  } else if (!is.null(x[["counts"]]) && !is.null(x[["scale.data"]])) {
+    # 4
+    layers_group <- root$create_group("layers")
+    slot_writer(layers_group, x[["counts"]], "counts")
+    slot_writer(root, x[["scale.data"]], "X")
+  } else if (!is.null(x[["data"]]) && !is.null(x[["scale.data"]])) {
+    # 3
+    layers_group <- root$create_group("layers")
+    slot_writer(layers_group, x[["data"]], "data")
+    slot_writer(root, x[["scale.data"]], "X")
+  } else if (!is.null(x[["counts"]]) && !is.null(x[["data"]])) {
+    # 2
+    layers_group <- root$create_group("layers")
+    slot_writer(layers_group, x[["counts"]], "counts")
+    slot_writer(root, x[["data"]], "X")
+  } else {
+    which_x <- which(!is.null(x))
+    slot_writer(root, x[[which_x]], "X")
   }
 
   uns_group <- root$create_group("uns")
@@ -118,18 +113,39 @@ WriteH5ADHelper <- function(object, assay, root, global = FALSE) {
       emb_assay <- red@assay.used
       loadings <- red@feature.loadings
 
-      if (!is.null(emb_assay) && emb_assay != "") {
-        if (emb_assay != assay) {
-          next
+      modality_specific <- FALSE
+      # Modality-specific reductions can be identified with all their feature names
+      # coming from the @assay.used.
+      if (!modality_specific) {
+        if (!is.null(loadings) && ncol(loadings) == ncol(red)) {
+          if (all(rownames(loadings) %in% var_names)) {
+            modality_specific <- TRUE
+          }
         }
-        if (!is.null(loadings) && nrow(loadings) != nrow(object)) {
-          next
+      }
+
+      # Modality-specific reductions in Seurat objects 
+      # can also start with modality name by the convention used in this package.
+      # Multimodal reductions also have the @assay.used set because this is enforced
+      # by the current Seurat package.
+      if (!is.null(emb_assay) && emb_assay != "" && emb_assay == assay) {
+        # Only count reduction as modality-specific
+        # if its name can be found in the reduction name or reduction key.
+        # This is required since Seurat does require having an existing modality
+        # in assay.used, which complicates loading multimodal embeddings.
+        # The latter are currently loaded with the default assay set as assay.used.
+        if (grepl(tolower(emb_assay), tolower(red_name)) || grepl(tolower(emb_assay), tolower(red@key))) {
+          modality_specific <- TRUE
         }
 
         # Strip away modality name if the embedding starts with it
-        if (emb_assay == substr(red_name, 1, nchar(emb_assay))) {
-          red_name <- substr(red_name, nchar(emb_assay) + 1, nchar(red_name))
+        if (emb_assay == substr(red_name, 1, length(emb_assay))) {
+          red_name <- substr(red_name, length(emb_assay) + 1, length(red_name))
         }
+      }
+
+      if (!modality_specific) {
+        next
       }
 
       obsm_group$create_dataset(paste0("X_", red_name), emb)
@@ -273,7 +289,8 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
 
   modalities <- Seurat::Assays(object)
 
-  h5$create_group("mod")
+  h5mod <- h5$create_group("mod")
+  h5mod$create_attr("mod-order", modalities)
   var_names <- lapply(modalities, function(mod) {
     mod_group <- h5$create_group(paste0("mod/", mod))
 
@@ -338,20 +355,13 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
       }
 
       if (modality_specific) {
-        # REMOVE: this should have been written with WriteH5ADHelper
-        # Modality-specific obsm
-        if (!"obsm" %in% names(h5[[paste0("mod/", assay_emb)]])) {
-          obsm <- h5$create_group(paste0("mod/", assay_emb, "/obsm"))
-        } else {
-          obsm <- h5[[paste0("mod/", assay_emb, "/obsm")]]
-        }
+        next
+      }
+
+      if (!"obsm" %in% names(h5)) {
+        obsm <- h5$create_group("obsm")
       } else {
-        # Global obsm
-        if (!"obsm" %in% names(h5)) {
-          obsm <- h5$create_group("obsm")
-        } else {
-          obsm <- h5[["obsm"]]
-        }
+        obsm <- h5[["obsm"]]
       }
 
       obsm$create_dataset(paste0("X_", red_name), emb)
@@ -364,27 +374,19 @@ setMethod("WriteH5MU", "Seurat", function(object, file, overwrite) {
         }
 
         if (modality_specific) {
-          # REMOVE: this should have been written with WriteH5ADHelper
-          if (!"varm" %in% names(h5[[paste0("mod/", assay_emb)]])) {
-            varm <- h5$create_group(paste0("mod/", assay_emb, "/varm"))
-          } else {
-            varm <- h5[[paste0("mod/", assay_emb, "/varm")]]
-          }
+          # this should have been written with WriteH5ADHelper
+          next
+        }
+        
+        if (!"varm" %in% names(h5)) {
+          varm <- h5$create_group("varm")
         } else {
-          if (!"varm" %in% names(h5)) {
-            varm <- h5$create_group("varm")
-          } else {
-            varm <- h5[["varm"]]
-          }
+          varm <- h5[["varm"]]
         }
         
         # If only a subset of features was used,
         # this has to be accounted for
-        if (modality_specific) {
-          var_names_for_loadings <- var_names[[assay_emb]]
-        } else {
-          var_names_for_loadings <- do.call(c, var_names)
-        }
+        var_names_for_loadings <- do.call(c, var_names)
 
         if (nrow(loadings) < length(var_names_for_loadings)) {
           warning(paste0("Loadings for ", red_name, " are computed only for a some features.",

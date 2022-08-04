@@ -21,6 +21,8 @@ Suggests:
     knitr,
     SeuratData,
     BiocStyle
+Config/Needs/website:
+    r-lib/downlit
 Remotes: SeuratData=satijalab/seurat-data
 VignetteBuilder: knitr
 License: GPL-3

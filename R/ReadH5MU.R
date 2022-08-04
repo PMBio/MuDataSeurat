@@ -290,7 +290,9 @@ ReadH5MU <- function(file) {
   for (mod in names(mod_obsm)) {
     mod_embeddings <- mod_obsm[[mod]]
     for (emb in names(mod_embeddings)) {
-      emb_name <- toupper(gsub('X_', '', emb))
+      emb_name <- gsub('X_', '', emb)
+      if (!startsWith(emb_name, mod))
+        emb_name <- toupper(emb_name)
       modemb_name <- emb_name
       if (!unique_emb)
         modemb_name <- paste(mod, emb_name, sep = "")

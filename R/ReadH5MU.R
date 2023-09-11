@@ -93,7 +93,7 @@ ReadH5AD <- function(file) {
   }
 
   # Add graphs
-  srt@graphs <- obsp
+  srt@graphs <- lapply(obsp, Seurat::as.Graph)
 
   # Close the connection
   h5$close()
@@ -231,7 +231,7 @@ ReadH5MU <- function(file) {
   # Metadata, features metadata, and variable features
   for (modality in names(modalities)) {
     # Append modality metadata
-    srt@meta.data <- cbind.data.frame(srt@meta.data, mod_obs[[modality]])
+    srt@meta.data <- cbind.data.frame(srt@meta.data, mod_obs[[modality]][obs_names,])
 
     # Add modality feature metadata
     meta_features_names <- rownames(srt[[modality]]@meta.features)
@@ -342,7 +342,7 @@ ReadH5MU <- function(file) {
       if (graph %in% names(srt@graphs)) {
         graph_name <- paste(mod, graph, sep = "_")
       }
-      srt@graphs[[graph_name]] <- mod_obsp[[mod]][[graph]]
+      srt@graphs[[graph_name]] <- Seurat::as.Graph(mod_obsp[[mod]][[graph]][obs_names, obs_names])
       srt@graphs[[graph_name]]@assay.used <- mod
     }
   }

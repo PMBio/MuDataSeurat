@@ -92,13 +92,13 @@ read_table_encv2 <- function(dataset, set_index = TRUE) {
   columns <- names(dataset)
 
   col_list <- lapply(columns, function(name) {
-    
+
     col_attr <- tryCatch({
       h5attributes(dataset[[name]])
     }, error = function(e) {
       list("encoding-type" = NULL)
     })
-    
+
     values <- read_column(dataset[[name]], col_attr$`encoding-type`, col_attr$`encoding-version`)
 
     values
@@ -330,7 +330,6 @@ read_attr_p <- function(root, attr_name, dim_names = NULL) {
       if ("dsCMatrix" %in% class(mx)) {
         mx <- as(mx, "dgCMatrix")
       }
-      Seurat::as.Graph(mx)
     })
 
     names(attrp) <- names(root[[attrp_name]])

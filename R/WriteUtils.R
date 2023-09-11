@@ -80,7 +80,7 @@ write_matrix <- function(parent, key, mat) {
         }
 
         if (!hasna) {
-            dset <- write_dataset(parent, key, mat, scalar=isscalar)
+            dset <- write_dataset(parent, key, mat)
             write_attribute(dset, "encoding-type", ifelse(is.character(mat), "string-array", "array"))
             write_attribute(dset, "encoding-version", "0.2.0")
         } else {

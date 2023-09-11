@@ -22,8 +22,13 @@ jobs:
           
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, any::Seurat, local::.
+          extra-packages: any::pkgdown, local::., SeuratData=?ignore
           needs: website
+
+      - name: Install SeuratData
+        if: always()
+        run: Rscript -e "install.packages('remotes', repos = 'http://cran.us.r-project.org'); remotes:::install_github('satijalab/seurat-data')"
+        shell: bash
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)

@@ -32,7 +32,7 @@ missing_on_read <- function(loc, desc = "") {
   if (!is.null(desc) && desc != "") {
     details <- paste0("Seurat does not support ", desc, ".")
   }
-  warning(paste0("Missing on read: ", loc, ". ", details))
+  warning(paste0("Missing on read: ", loc, ". ", details), call.=FALSE)
 }
 
 read_table_encv1 <- function(dataset, set_index = TRUE) {
@@ -186,22 +186,13 @@ read_matrix <- function(dataset) {
         }
       }
 
-      # X is a dgCMatrix.
-      # No direct dgCMatrix -> dgRMatrix coersion provided in Matrix.
-      if (rowwise) {
-        X <- Matrix::Matrix(0, X_dims[2], X_dims[1], doDiag = FALSE)
-      } else {
-        X <- Matrix::Matrix(0, X_dims[1], X_dims[2], doDiag = FALSE)
-      }
-      X@i <- i
-      X@p <- p
-      X@x <- x
+      if (rowwise)
+          X <- Matrix::sparseMatrix(j=i, p=p, x=x, dims=X_dims, index1=FALSE)
+      else
+          X <- Matrix::sparseMatrix(i=i, p=p, x=x, dims=X_dims, index1=FALSE)
 
-      if (rowwise) {
-        X
-      } else {
-        Matrix::t(X)
-      }
+      Matrix::t(X)
+
     } else {
       dataset$read()
     }
@@ -298,15 +289,22 @@ read_attr_m <- function(root, attr_name, dim_names = NULL) {
   attrm <- list()
   if (attrm_name %in% names(root)) {
     attrm <- lapply(names(root[[attrm_name]]), function(space) {
-      mx <- t(root[[attrm_name]][[space]]$read())
-      if (dim(mx)[1] == 1) {
-        mx <- t(mx)
+      dset <- root[[attrm_name]][[space]]
+      if (dset$attr_exists("encoding-type") && h5attr(dset, "encoding-type") == "dataframe") {
+        missing_on_read(paste0(root$get_obj_name(), attrm_name, "/", space), "additional metadata dataframes")
+        mx <- NULL
+      } else {
+        mx <- t(read_matrix(dset))
+        if (dim(mx)[1] == 1) {
+          mx <- t(mx)
+        }
+        rownames(mx) <- dim_names
       }
-      rownames(mx) <- dim_names
       mx
     })
 
     names(attrm) <- names(root[[attrm_name]])
+    attrm <- attrm[!sapply(attrm, is.null)]
   }
 
   attrm
@@ -326,10 +324,7 @@ read_attr_p <- function(root, attr_name, dim_names = NULL) {
       mx <- read_matrix(root[[attrp_name]][[graph]])
       rownames(mx) <- dim_names
       colnames(mx) <- dim_names
-      # Prevent automatic coersion based on equal dimensions
-      if ("dsCMatrix" %in% class(mx)) {
-        mx <- as(mx, "dgCMatrix")
-      }
+      mx
     })
 
     names(attrp) <- names(root[[attrp_name]])

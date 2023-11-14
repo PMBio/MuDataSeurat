@@ -76,7 +76,7 @@ Kats</h4>
 Germany<br><a class="author_email" href="mailto:#"></a><a href="mailto:i.kats@dkfz-heidelberg.de" class="email">i.kats@dkfz-heidelberg.de</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2023-09-11</h4>
+            <h4 data-toc-skip class="date">2023-11-14</h4>
       
       
       <div class="d-none name"><code>Getting-Started.Rmd</code></div>
@@ -130,10 +130,24 @@ to obtain data in the form of Seurat objects:</p>
 <span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
 <span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"cbmc"</span><span class="op">)</span></span>
+<span><span class="va">cbmc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/UpdateSeuratObject.html" class="external-link">UpdateSeuratObject</a></span><span class="op">(</span><span class="va">cbmc</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Validating object structure</span></span>
+<span><span class="co">#&gt; Updating object slots</span></span>
+<span><span class="co">#&gt; Ensuring keys are in the proper structure</span></span>
+<span><span class="co">#&gt; Warning: Assay RNA changing from Assay to Assay</span></span>
+<span><span class="co">#&gt; Warning: Assay ADT changing from Assay to Assay</span></span>
+<span><span class="co">#&gt; Ensuring keys are in the proper structure</span></span>
+<span><span class="co">#&gt; Ensuring feature names don't have underscores or pipes</span></span>
+<span><span class="co">#&gt; Updating slots in RNA</span></span>
+<span><span class="co">#&gt; Updating slots in ADT</span></span>
+<span><span class="co">#&gt; Validating object structure for Assay 'RNA'</span></span>
+<span><span class="co">#&gt; Validating object structure for Assay 'ADT'</span></span>
+<span><span class="co">#&gt; Object representation is consistent with the most current Seurat version</span></span>
 <span><span class="va">cbmc</span></span>
 <span><span class="co">#&gt; An object of class Seurat </span></span>
 <span><span class="co">#&gt; 20511 features across 8617 samples within 2 assays </span></span>
 <span><span class="co">#&gt; Active assay: RNA (20501 features, 0 variable features)</span></span>
+<span><span class="co">#&gt;  2 layers present: counts, data</span></span>
 <span><span class="co">#&gt;  1 other assay present: ADT</span></span></code></pre></div>
 <p>First, we make variable names unique across modalities:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -153,6 +167,7 @@ to obtain data in the form of Seurat objects:</p>
 <span><span class="co">#&gt; An object of class Seurat </span></span>
 <span><span class="co">#&gt; 20511 features across 8617 samples within 2 assays </span></span>
 <span><span class="co">#&gt; Active assay: ADT (10 features, 0 variable features)</span></span>
+<span><span class="co">#&gt;  2 layers present: counts, data</span></span>
 <span><span class="co">#&gt;  1 other assay present: RNA</span></span></code></pre></div>
 <p>We can then use <code><a href="../reference/WriteH5MU.html">WriteH5MU()</a></code> to write the contents of the
 <code>cbmc</code> object to an <code>H5MU</code> file:</p>
@@ -199,12 +214,11 @@ be read. For instance, Seurat has no support for loading multimodal
 embeddings or pairwise graphs.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cbmc_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5MU.html">ReadH5MU</a></span><span class="op">(</span><span class="st">"cbmc.h5mu"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Keys should be one or more alphanumeric characters followed by an</span></span>
-<span><span class="co">#&gt; underscore, setting key from rna to rna_</span></span>
 <span><span class="va">cbmc_r</span></span>
 <span><span class="co">#&gt; An object of class Seurat </span></span>
 <span><span class="co">#&gt; 20511 features across 8617 samples within 2 assays </span></span>
 <span><span class="co">#&gt; Active assay: RNA (20501 features, 0 variable features)</span></span>
+<span><span class="co">#&gt;  2 layers present: counts, data</span></span>
 <span><span class="co">#&gt;  1 other assay present: ADT</span></span></code></pre></div>
 <p>Importantly, we recover the information from the original Seurat
 object:</p>
@@ -239,10 +253,21 @@ distributed via <code>SeuratDisk</code>:</p>
 <span><span class="co">#&gt; Installing package into '/home/runner/work/_temp/Library'</span></span>
 <span><span class="co">#&gt; (as 'lib' is unspecified)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"pbmc3k"</span><span class="op">)</span></span>
+<span><span class="va">pbmc3k</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/UpdateSeuratObject.html" class="external-link">UpdateSeuratObject</a></span><span class="op">(</span><span class="va">pbmc3k</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Validating object structure</span></span>
+<span><span class="co">#&gt; Updating object slots</span></span>
+<span><span class="co">#&gt; Ensuring keys are in the proper structure</span></span>
+<span><span class="co">#&gt; Warning: Assay RNA changing from Assay to Assay</span></span>
+<span><span class="co">#&gt; Ensuring keys are in the proper structure</span></span>
+<span><span class="co">#&gt; Ensuring feature names don't have underscores or pipes</span></span>
+<span><span class="co">#&gt; Updating slots in RNA</span></span>
+<span><span class="co">#&gt; Validating object structure for Assay 'RNA'</span></span>
+<span><span class="co">#&gt; Object representation is consistent with the most current Seurat version</span></span>
 <span><span class="va">pbmc3k</span></span>
 <span><span class="co">#&gt; An object of class Seurat </span></span>
 <span><span class="co">#&gt; 13714 features across 2700 samples within 1 assay </span></span>
-<span><span class="co">#&gt; Active assay: RNA (13714 features, 0 variable features)</span></span></code></pre></div>
+<span><span class="co">#&gt; Active assay: RNA (13714 features, 0 variable features)</span></span>
+<span><span class="co">#&gt;  2 layers present: counts, data</span></span></code></pre></div>
 <p>We can use <code><a href="../reference/WriteH5AD.html">WriteH5AD()</a></code> to write the contents of the
 <code>pbmc3k</code> object to an <code>H5AD</code> file since this
 dataset contains a single modality (assay):</p>
@@ -252,12 +277,11 @@ dataset contains a single modality (assay):</p>
 <code>ReadH5AD</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pbmc3k_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ReadH5AD.html">ReadH5AD</a></span><span class="op">(</span><span class="st">"pbmc3k.h5ad"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Keys should be one or more alphanumeric characters followed by an</span></span>
-<span><span class="co">#&gt; underscore, setting key from rna to rna_</span></span>
 <span><span class="va">pbmc3k_r</span></span>
 <span><span class="co">#&gt; An object of class Seurat </span></span>
 <span><span class="co">#&gt; 13714 features across 2700 samples within 1 assay </span></span>
-<span><span class="co">#&gt; Active assay: RNA (13714 features, 0 variable features)</span></span></code></pre></div>
+<span><span class="co">#&gt; Active assay: RNA (13714 features, 0 variable features)</span></span>
+<span><span class="co">#&gt;  2 layers present: counts, data</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -276,7 +300,7 @@ documentation</p></li>
 </h2>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.3.1 (2023-06-16)</span></span>
+<span><span class="co">#&gt; R version 4.3.2 (2023-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 22.04.3 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -298,51 +322,53 @@ documentation</p></li>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
 <span><span class="co">#&gt; [1] pbmc3k.SeuratData_3.1.4 cbmc.SeuratData_3.1.4   hdf5r_1.3.8            </span></span>
-<span><span class="co">#&gt; [4] SeuratData_0.2.2        SeuratObject_4.1.3      Seurat_4.3.0.1         </span></span>
-<span><span class="co">#&gt; [7] MuDataSeurat_0.0.0.9000 BiocStyle_2.28.0       </span></span>
+<span><span class="co">#&gt; [4] SeuratData_0.2.2.9001   Seurat_5.0.0            SeuratObject_5.0.0     </span></span>
+<span><span class="co">#&gt; [7] sp_2.1-1                MuDataSeurat_0.0.0.9000 BiocStyle_2.28.1       </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] RColorBrewer_1.1-3     jsonlite_1.8.7         magrittr_2.0.3        </span></span>
-<span><span class="co">#&gt;   [4] spatstat.utils_3.0-3   rmarkdown_2.24         fs_1.6.3              </span></span>
-<span><span class="co">#&gt;   [7] ragg_1.2.5             vctrs_0.6.3            ROCR_1.0-11           </span></span>
-<span><span class="co">#&gt;  [10] memoise_2.0.1          spatstat.explore_3.2-3 htmltools_0.5.6       </span></span>
-<span><span class="co">#&gt;  [13] sass_0.4.7             sctransform_0.3.5      parallelly_1.36.0     </span></span>
-<span><span class="co">#&gt;  [16] KernSmooth_2.23-21     bslib_0.5.1            htmlwidgets_1.6.2     </span></span>
-<span><span class="co">#&gt;  [19] desc_1.4.2             ica_1.0-3              plyr_1.8.8            </span></span>
-<span><span class="co">#&gt;  [22] plotly_4.10.2          zoo_1.8-12             cachem_1.0.8          </span></span>
-<span><span class="co">#&gt;  [25] igraph_1.5.1           mime_0.12              lifecycle_1.0.3       </span></span>
-<span><span class="co">#&gt;  [28] pkgconfig_2.0.3        Matrix_1.5-4.1         R6_2.5.1              </span></span>
+<span><span class="co">#&gt;   [4] spatstat.utils_3.0-4   rmarkdown_2.25         fs_1.6.3              </span></span>
+<span><span class="co">#&gt;   [7] ragg_1.2.6             vctrs_0.6.4            ROCR_1.0-11           </span></span>
+<span><span class="co">#&gt;  [10] memoise_2.0.1          spatstat.explore_3.2-5 htmltools_0.5.7       </span></span>
+<span><span class="co">#&gt;  [13] sass_0.4.7             sctransform_0.4.1      parallelly_1.36.0     </span></span>
+<span><span class="co">#&gt;  [16] KernSmooth_2.23-22     bslib_0.5.1            htmlwidgets_1.6.2     </span></span>
+<span><span class="co">#&gt;  [19] desc_1.4.2             ica_1.0-3              plyr_1.8.9            </span></span>
+<span><span class="co">#&gt;  [22] plotly_4.10.3          zoo_1.8-12             cachem_1.0.8          </span></span>
+<span><span class="co">#&gt;  [25] igraph_1.5.1           mime_0.12              lifecycle_1.0.4       </span></span>
+<span><span class="co">#&gt;  [28] pkgconfig_2.0.3        Matrix_1.6-1.1         R6_2.5.1              </span></span>
 <span><span class="co">#&gt;  [31] fastmap_1.1.1          fitdistrplus_1.1-11    future_1.33.0         </span></span>
-<span><span class="co">#&gt;  [34] shiny_1.7.5            digest_0.6.33          colorspace_2.1-0      </span></span>
-<span><span class="co">#&gt;  [37] patchwork_1.1.3        rprojroot_2.0.3        tensor_1.5            </span></span>
-<span><span class="co">#&gt;  [40] irlba_2.3.5.1          textshaping_0.3.6      progressr_0.14.0      </span></span>
-<span><span class="co">#&gt;  [43] fansi_1.0.4            spatstat.sparse_3.0-2  httr_1.4.7            </span></span>
-<span><span class="co">#&gt;  [46] polyclip_1.10-4        abind_1.4-5            compiler_4.3.1        </span></span>
-<span><span class="co">#&gt;  [49] bit64_4.0.5            MASS_7.3-60            rappdirs_0.3.3        </span></span>
-<span><span class="co">#&gt;  [52] tools_4.3.1            lmtest_0.9-40          httpuv_1.6.11         </span></span>
-<span><span class="co">#&gt;  [55] future.apply_1.11.0    goftest_1.2-3          glue_1.6.2            </span></span>
-<span><span class="co">#&gt;  [58] nlme_3.1-162           promises_1.2.1         grid_4.3.1            </span></span>
-<span><span class="co">#&gt;  [61] Rtsne_0.16             cluster_2.1.4          reshape2_1.4.4        </span></span>
-<span><span class="co">#&gt;  [64] generics_0.1.3         gtable_0.3.4           spatstat.data_3.0-1   </span></span>
-<span><span class="co">#&gt;  [67] tidyr_1.3.0            data.table_1.14.8      sp_2.0-0              </span></span>
-<span><span class="co">#&gt;  [70] utf8_1.2.3             spatstat.geom_3.2-5    RcppAnnoy_0.0.21      </span></span>
-<span><span class="co">#&gt;  [73] ggrepel_0.9.3          RANN_2.6.1             pillar_1.9.0          </span></span>
-<span><span class="co">#&gt;  [76] stringr_1.5.0          later_1.3.1            splines_4.3.1         </span></span>
-<span><span class="co">#&gt;  [79] dplyr_1.1.3            lattice_0.21-8         bit_4.0.5             </span></span>
-<span><span class="co">#&gt;  [82] survival_3.5-5         deldir_1.0-9           tidyselect_1.2.0      </span></span>
-<span><span class="co">#&gt;  [85] miniUI_0.1.1.1         pbapply_1.7-2          knitr_1.43            </span></span>
-<span><span class="co">#&gt;  [88] gridExtra_2.3          bookdown_0.35          scattermore_1.2       </span></span>
-<span><span class="co">#&gt;  [91] xfun_0.40              matrixStats_1.0.0      stringi_1.7.12        </span></span>
-<span><span class="co">#&gt;  [94] lazyeval_0.2.2         yaml_2.3.7             evaluate_0.21         </span></span>
-<span><span class="co">#&gt;  [97] codetools_0.2-19       tibble_3.2.1           BiocManager_1.30.22   </span></span>
-<span><span class="co">#&gt; [100] cli_3.6.1              uwot_0.1.16            xtable_1.8-4          </span></span>
-<span><span class="co">#&gt; [103] reticulate_1.31        systemfonts_1.0.4      munsell_0.5.0         </span></span>
-<span><span class="co">#&gt; [106] jquerylib_0.1.4        Rcpp_1.0.11            globals_0.16.2        </span></span>
-<span><span class="co">#&gt; [109] spatstat.random_3.1-6  png_0.1-8              parallel_4.3.1        </span></span>
-<span><span class="co">#&gt; [112] ellipsis_0.3.2         pkgdown_2.0.7          ggplot2_3.4.3         </span></span>
-<span><span class="co">#&gt; [115] listenv_0.9.0          viridisLite_0.4.2      scales_1.2.1          </span></span>
-<span><span class="co">#&gt; [118] ggridges_0.5.4         crayon_1.5.2           leiden_0.4.3          </span></span>
-<span><span class="co">#&gt; [121] purrr_1.0.2            rlang_1.1.1            cowplot_1.1.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [34] shiny_1.7.5.1          digest_0.6.33          colorspace_2.1-0      </span></span>
+<span><span class="co">#&gt;  [37] patchwork_1.1.3        rprojroot_2.0.4        tensor_1.5            </span></span>
+<span><span class="co">#&gt;  [40] RSpectra_0.16-1        irlba_2.3.5.1          textshaping_0.3.7     </span></span>
+<span><span class="co">#&gt;  [43] progressr_0.14.0       fansi_1.0.5            spatstat.sparse_3.0-3 </span></span>
+<span><span class="co">#&gt;  [46] httr_1.4.7             polyclip_1.10-6        abind_1.4-5           </span></span>
+<span><span class="co">#&gt;  [49] compiler_4.3.2         bit64_4.0.5            fastDummies_1.7.3     </span></span>
+<span><span class="co">#&gt;  [52] MASS_7.3-60            rappdirs_0.3.3         tools_4.3.2           </span></span>
+<span><span class="co">#&gt;  [55] lmtest_0.9-40          httpuv_1.6.12          future.apply_1.11.0   </span></span>
+<span><span class="co">#&gt;  [58] goftest_1.2-3          glue_1.6.2             nlme_3.1-163          </span></span>
+<span><span class="co">#&gt;  [61] promises_1.2.1         grid_4.3.2             Rtsne_0.16            </span></span>
+<span><span class="co">#&gt;  [64] cluster_2.1.4          reshape2_1.4.4         generics_0.1.3        </span></span>
+<span><span class="co">#&gt;  [67] gtable_0.3.4           spatstat.data_3.0-3    tidyr_1.3.0           </span></span>
+<span><span class="co">#&gt;  [70] data.table_1.14.8      utf8_1.2.4             spatstat.geom_3.2-7   </span></span>
+<span><span class="co">#&gt;  [73] RcppAnnoy_0.0.21       ggrepel_0.9.4          RANN_2.6.1            </span></span>
+<span><span class="co">#&gt;  [76] pillar_1.9.0           stringr_1.5.0          spam_2.10-0           </span></span>
+<span><span class="co">#&gt;  [79] RcppHNSW_0.5.0         later_1.3.1            splines_4.3.2         </span></span>
+<span><span class="co">#&gt;  [82] dplyr_1.1.3            lattice_0.21-9         bit_4.0.5             </span></span>
+<span><span class="co">#&gt;  [85] survival_3.5-7         deldir_1.0-9           tidyselect_1.2.0      </span></span>
+<span><span class="co">#&gt;  [88] miniUI_0.1.1.1         pbapply_1.7-2          knitr_1.45            </span></span>
+<span><span class="co">#&gt;  [91] gridExtra_2.3          bookdown_0.36          scattermore_1.2       </span></span>
+<span><span class="co">#&gt;  [94] xfun_0.41              matrixStats_1.1.0      stringi_1.7.12        </span></span>
+<span><span class="co">#&gt;  [97] lazyeval_0.2.2         yaml_2.3.7             evaluate_0.23         </span></span>
+<span><span class="co">#&gt; [100] codetools_0.2-19       tibble_3.2.1           BiocManager_1.30.22   </span></span>
+<span><span class="co">#&gt; [103] cli_3.6.1              uwot_0.1.16            xtable_1.8-4          </span></span>
+<span><span class="co">#&gt; [106] reticulate_1.34.0      systemfonts_1.0.5      munsell_0.5.0         </span></span>
+<span><span class="co">#&gt; [109] jquerylib_0.1.4        Rcpp_1.0.11            globals_0.16.2        </span></span>
+<span><span class="co">#&gt; [112] spatstat.random_3.2-1  png_0.1-8              parallel_4.3.2        </span></span>
+<span><span class="co">#&gt; [115] ellipsis_0.3.2         pkgdown_2.0.7          ggplot2_3.4.4         </span></span>
+<span><span class="co">#&gt; [118] dotCall64_1.1-0        listenv_0.9.0          viridisLite_0.4.2     </span></span>
+<span><span class="co">#&gt; [121] scales_1.2.1           ggridges_0.5.4         crayon_1.5.2          </span></span>
+<span><span class="co">#&gt; [124] leiden_0.4.3           purrr_1.0.2            rlang_1.1.2           </span></span>
+<span><span class="co">#&gt; [127] cowplot_1.1.1</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

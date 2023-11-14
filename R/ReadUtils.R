@@ -276,6 +276,8 @@ read_layers_to_assay <- function(root, modalityname="") {
     }
   }
 
+  assay@meta.features <- var
+
   assay
 }
 

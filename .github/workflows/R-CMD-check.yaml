@@ -37,14 +37,14 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install hdf5
         
-      - name: Install SeuratData
-        if: always()
-        run: Rscript -e "install.packages(c('remotes', 'Seurat'), repos = 'http://cran.us.r-project.org'); remotes:::install_github('satijalab/seurat-data')"
-        shell: bash
-      
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: rcmdcheck
+          extra-packages: any::rcmdcheck, SeuratData=?ignore
+
+      - name: Install SeuratData
+        if: always()
+        run: Rscript -e "install.packages('remotes', repos = 'http://cran.us.r-project.org'); remotes:::install_github('satijalab/seurat-data')"
+        shell: bash
 
       - uses: r-lib/actions/check-r-package@v2
 

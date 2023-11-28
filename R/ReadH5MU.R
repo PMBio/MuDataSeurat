@@ -93,7 +93,7 @@ ReadH5AD <- function(file) {
   }
 
   # Add graphs
-  srt@graphs <- obsp
+  srt@graphs <- lapply(obsp, Seurat::as.Graph)
 
   # Close the connection
   h5$close()
@@ -165,7 +165,7 @@ ReadH5MU <- function(file) {
 
   # mod/.../X, raw, and layers
   modalities <- lapply(assays, function(mod) {
-    assay <- read_layers_to_assay(h5[['mod']][[mod]], mod)
+   read_layers_to_assay(h5[['mod']][[mod]], mod)
   })
   names(modalities) <- assays
 
@@ -174,12 +174,6 @@ ReadH5MU <- function(file) {
     read_table(h5[['mod']][[mod]][['obs']])
   })
   names(mod_obs) <- assays
-
-  # mod/.../var
-  mod_var <- lapply(assays, function(mod) {
-    read_table(h5[['mod']][[mod]][['var']])
-  })
-  names(mod_var) <- assays
 
   # mod/.../obsm
   mod_obsm <- lapply(assays, function(mod) {
@@ -233,15 +227,12 @@ ReadH5MU <- function(file) {
     # Append modality metadata
     srt@meta.data <- cbind.data.frame(srt@meta.data, mod_obs[[modality]][obs_names,,drop=FALSE])
 
-    # Add modality feature metadata
-    meta_features_names <- rownames(srt[[modality]]@meta.features)
-    srt[[modality]]@meta.features <- cbind.data.frame(mod_var[[modality]], srt[[modality]]@meta.features)
-    rownames(srt[[modality]]@meta.features) <- meta_features_names
+    metafeatures <- srt[[modality]]@meta.features
 
     # Specify highly variable features
-    if ("highly_variable" %in% colnames(mod_var[[modality]])) {
-      if (is.logical(mod_var[[modality]]$highly_variable)) {
-        srt[[modality]]@var.features <- rownames(srt[[modality]])[mod_var[[modality]]$highly_variable]
+    if ("highly_variable" %in% colnames(metafeatures)) {
+      if (is.logical(metafeatures$highly_variable)) {
+        srt[[modality]]@var.features <- rownames(metafeatures)[metafeatures$highly_variable]
       }
     }
   }
@@ -342,7 +333,7 @@ ReadH5MU <- function(file) {
       if (graph %in% names(srt@graphs)) {
         graph_name <- paste(mod, graph, sep = "_")
       }
-      srt@graphs[[graph_name]] <- mod_obsp[[mod]][[graph]]
+      srt@graphs[[graph_name]] <- Seurat::as.Graph(mod_obsp[[mod]][[graph]][obs_names, obs_names])
       srt@graphs[[graph_name]]@assay.used <- mod
     }
   }

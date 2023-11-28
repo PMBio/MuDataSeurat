@@ -8,7 +8,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -20,18 +20,26 @@ jobs:
         with:
           use-public-rspm: true
           
-      - name: Install SeuratData
-        if: always()
-        run: Rscript -e "install.packages(c('remotes', 'Seurat'), repos = 'http://cran.us.r-project.org'); remotes:::install_github('satijalab/seurat-data')"
-        shell: bash
-     
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown
+          extra-packages: any::pkgdown, local::., SeuratData=?ignore
           needs: website
 
-      - name: Deploy package
-        run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+      - name: Install SeuratData
+        if: always()
+        run: Rscript -e "install.packages('remotes', repos = 'http://cran.us.r-project.org'); remotes:::install_github('satijalab/seurat-data')"
+        shell: bash
+
+      - name: Build site
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        shell: Rscript {0}
+
+      - name: Deploy to GitHub pages
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          clean: false
+          branch: gh-pages
+          folder: docs
+          git-config-name: ${{ github.actor }}
+          git-config-email: ${{ github.actor }}@users.noreply.github.com

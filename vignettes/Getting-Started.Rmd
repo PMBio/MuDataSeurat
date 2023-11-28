@@ -63,6 +63,7 @@ We'll use a Seurat object distributed via `SeuratData`:
 ```{r}
 suppressWarnings(InstallData("cbmc"))
 data("cbmc")
+cbmc <- UpdateSeuratObject(cbmc)
 cbmc
 ```
 
@@ -131,6 +132,7 @@ For demonstration, we'll use a Seurat object with scRNA-seq counts distributed v
 ```{r}
 suppressWarnings(InstallData("pbmc3k"))
 data("pbmc3k")
+pbmc3k <- UpdateSeuratObject(pbmc3k)
 pbmc3k
 ```
 

@@ -40,7 +40,11 @@ read_table_encv1 <- function(dataset, set_index = TRUE) {
   columns <- columns[columns != "__categories"]
 
   col_list <- lapply(columns, function(name) {
-    values <- dataset[[name]]$read()
+    if (dataset[[name]]$dims == 0) {
+      values <- list()
+    } else {
+      values <- dataset[[name]]$read()
+    }
     values_attr <- tryCatch({
       h5attributes(dataset[[name]])
     }, error = function(e) {
@@ -59,7 +63,13 @@ read_table_encv1 <- function(dataset, set_index = TRUE) {
     }
     values
   })
-  table <- data.frame(Reduce(cbind.data.frame, col_list))
+  empty_columns <- vapply(col_list, function(e) { length(e) == 0 }, c(TRUE))
+  if (all(empty_columns)) {
+    # no rows
+    table <- data.frame(matrix(ncol = length(columns), nrow = 0))
+  } else {
+    table <- data.frame(Reduce(cbind.data.frame, col_list), drop=FALSE)
+  }
   colnames(table) <- columns
   table
 }
@@ -77,13 +87,22 @@ read_column <- function(column, etype, eversion) {
 
       values <- factor(as.integer(codes), labels = categories[1:length(codes_notna)])
     } else {
-      warning(paste0("Cannot recognise encoving-version ", eversion))
+      warning(paste0("Cannot recognise encoding-version ", eversion))
+    }
+  } else if (etype == "nullable-integer" || etype == "nullable-boolean") {
+    # https://anndata.readthedocs.io/en/latest/fileformat-prose.html#nullable-integers-and-booleans
+    if (eversion == "0.1.0") {
+      values <- column[["values"]]$read()
+      mask <- column[["mask"]]$read()
+      values[mask] <- NA
+    } else {
+      warning(paste0("Cannot recognise encoding-version ", eversion))
     }
   } else {
     values <- column$read()
   }
   # } else {
-  #   stop(paste0("Cannot recognise encoving-type ", etype))
+  #   stop(paste0("Cannot recognise encoding-type ", etype))
   # }
   values
 }

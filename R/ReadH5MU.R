@@ -225,7 +225,7 @@ ReadH5MU <- function(file) {
   # Metadata, features metadata, and variable features
   for (modality in names(modalities)) {
     # Append modality metadata
-    srt@meta.data <- cbind.data.frame(srt@meta.data, mod_obs[[modality]][obs_names,])
+    srt@meta.data <- cbind.data.frame(srt@meta.data, mod_obs[[modality]][obs_names,,drop=FALSE])
 
     metafeatures <- srt[[modality]]@meta.features
 
